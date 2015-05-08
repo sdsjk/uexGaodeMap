@@ -333,7 +333,7 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
 
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {
-            Log.i("djf-" + TAG, "onLocationChanged");
+            Log.i(TAG, "onLocationChanged");
             if (aMapLocation != null && aMapLocation.getAMapException().getErrorCode() == 0){
                 switch (type){
                     case JsConst.SHOW_LOCATION:
@@ -401,7 +401,7 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
     }
 
     public void setMyLocationEnable(int type) {
-        Log.i("djf-" + TAG, "setMyLocationEnable-type = " + type);
+        Log.i(TAG, "setMyLocationEnable-type = " + type);
         if (aMap != null){
             aMap.setMyLocationEnabled(type == JsConst.ENABLE ? true : false);
             if (type == JsConst.ENABLE){
@@ -421,13 +421,13 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
-        Log.i("djf-" + TAG, "activate");
+        Log.i(TAG, "activate");
         this.mLocationChangedListener = onLocationChangedListener;
     }
 
     @Override
     public void deactivate() {
-        Log.i("djf-" + TAG, "deactivate");
+        Log.i(TAG, "deactivate");
     }
 
     public void setMyLocationType(int type){

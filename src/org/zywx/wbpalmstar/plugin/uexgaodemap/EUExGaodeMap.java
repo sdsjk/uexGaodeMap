@@ -1823,7 +1823,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private void callBackPluginJs(String methodName, String jsonData){
         String js = SCRIPT_HEADER + "if(" + methodName + "){"
                 + methodName + "('" + jsonData + "');}";
-        Log.i("djf-" + TAG, "callBackPluginJs->js = " + js);
+        Log.i(TAG, "callBackPluginJs->js = " + js);
         onCallback(js);
     }
 
