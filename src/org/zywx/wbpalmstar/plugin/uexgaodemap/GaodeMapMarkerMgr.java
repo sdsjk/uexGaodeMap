@@ -80,7 +80,7 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Log.i("djf-" + TAG,"onMarkerClick->isShowBubble = " + marker.isInfoWindowShown());
+        Log.i(TAG,"onMarkerClick->isShowBubble = " + marker.isInfoWindowShown());
         String id = getMarkerId(marker.getId());
         if (mListener != null){
             mListener.onMarkerClicked(id);
