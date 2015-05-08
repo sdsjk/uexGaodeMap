@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uexplugins>
+	<plugin
+        className="org.zywx.wbpalmstar.plugin.uexgaodemap.EUExGaodeMap" uexName="uexGaodeMap" >
+        <method name="poiSearchDetail" type = "1"/>
+    </plugin>
+</uexplugins>
