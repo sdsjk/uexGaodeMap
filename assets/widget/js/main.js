@@ -7,3 +7,8 @@ function openNewWin(inWndName,html,inAniID,f,time)
 		uexWindow.open(inWndName, '0', html, '2', '', '', (f) ? f : 4);
 	}
 }
+
+function closeWin() {
+    uexGaodeMap.close();
+    uexWindow.close(-1);
+}
