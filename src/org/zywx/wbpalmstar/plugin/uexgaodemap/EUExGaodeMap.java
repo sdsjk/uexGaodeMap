@@ -117,6 +117,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private static final int MSG_SET_USER_TRACKING_MODE = 47;
     private static final int MSG_REMOVE_OVERLAY = 48;
     private static final int MSG_POI_SEARCH_DETAIL = 49;
+    private static final long serialVersionUID = 4361331124195620438L;
 
     private static LocalActivityManager mgr;
 
@@ -1110,62 +1111,58 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 if (jsonObject.has(JsConst.SEARCHBOUND)){
                     JSONObject boundJson = jsonObject.getJSONObject(JsConst.SEARCHBOUND);
                     String type = boundJson.getString(JsConst.TYPE);
-                    switch (type){
-                        case BoundBaseBean.TYPE_CIRCLE:
-                            JSONObject circle_dataInfo = boundJson.getJSONObject(JsConst.DATAINFO);
-                            JSONObject centerJson = circle_dataInfo.getJSONObject(JsConst.CENTER);
-                            double longitude = Double.valueOf(centerJson.getString(JsConst.LONGITUDE));
-                            double latitude = Double.valueOf(centerJson.getString(JsConst.LATITUDE));
-                            LatLonPoint center = new LatLonPoint(latitude, longitude);
-                            CircleBoundBean circle = new CircleBoundBean(BoundBaseBean.TYPE_CIRCLE);
-                            circle.setCenter(center);
-                            if (circle_dataInfo.has(JsConst.RADIUS)){
-                                int radius = Integer.valueOf(circle_dataInfo.getString(JsConst.RADIUS));
-                                circle.setRadiusInMeters(radius);
-                            }
-                            if (circle_dataInfo.has(JsConst.ISDISTANCESORT)){
-                                boolean isDistanceSort = Boolean.valueOf(
-                                        circle_dataInfo.getString(JsConst.ISDISTANCESORT));
-                                circle.setDistanceSort(isDistanceSort);
-                            }
-                            bean.setSearchBound(circle);
-                            break;
-                        case BoundBaseBean.TYPE_RECTANGLE:
-                            JSONObject rectangle_dataInfo = boundJson.getJSONObject(JsConst.DATAINFO);
-                            JSONObject lowerLeftJson = rectangle_dataInfo
-                                    .getJSONObject(JsConst.LOWERLEFT);
-                            double llLongitude = Double.valueOf(
-                                    lowerLeftJson.getString(JsConst.LONGITUDE));
-                            double llLatitude = Double.valueOf(
-                                    lowerLeftJson.getString(JsConst.LATITUDE));
-                            LatLonPoint ll = new LatLonPoint(llLatitude, llLongitude);
-                            JSONObject upperRightJson = rectangle_dataInfo
-                                    .getJSONObject(JsConst.UPPERRIGHT);
-                            double urLongitude = Double.valueOf(
-                                    upperRightJson.getString(JsConst.LONGITUDE));
-                            double urLatitude = Double.valueOf(
-                                    upperRightJson.getString(JsConst.LATITUDE));
-                            LatLonPoint ur = new LatLonPoint(urLatitude, urLongitude);
-                            RectangleBoundBean rectangle = new RectangleBoundBean(
-                                    BoundBaseBean.TYPE_RECTANGLE);
-                            rectangle.setLowerLeft(ll);
-                            rectangle.setUpperRight(ur);
-                            bean.setSearchBound(rectangle);
-                            break;
-                        case BoundBaseBean.TYPE_POLYGON:
-                            JSONArray dataArray = boundJson.getJSONArray(JsConst.DATAINFO);
-                            PolygonBoundBean polygon = new PolygonBoundBean(BoundBaseBean.TYPE_POLYGON);
-                            List<LatLonPoint> list = new ArrayList<LatLonPoint>();
-                            for (int i = 0; i < dataArray.length(); i++){
-                                JSONObject item = new JSONObject(dataArray.optString(i));
-                                double itemLng = Double.valueOf(item.getString(JsConst.LONGITUDE));
-                                double itemLat = Double.valueOf(item.getString(JsConst.LATITUDE));
-                                LatLonPoint point = new LatLonPoint(itemLat, itemLng);
-                                list.add(point);
-                            }
-                            polygon.setList(list);
-                            bean.setSearchBound(polygon);
-                            break;
+                    if (type.equals(BoundBaseBean.TYPE_CIRCLE)){
+                        JSONObject circle_dataInfo = boundJson.getJSONObject(JsConst.DATAINFO);
+                        JSONObject centerJson = circle_dataInfo.getJSONObject(JsConst.CENTER);
+                        double longitude = Double.valueOf(centerJson.getString(JsConst.LONGITUDE));
+                        double latitude = Double.valueOf(centerJson.getString(JsConst.LATITUDE));
+                        LatLonPoint center = new LatLonPoint(latitude, longitude);
+                        CircleBoundBean circle = new CircleBoundBean(BoundBaseBean.TYPE_CIRCLE);
+                        circle.setCenter(center);
+                        if (circle_dataInfo.has(JsConst.RADIUS)){
+                            int radius = Integer.valueOf(circle_dataInfo.getString(JsConst.RADIUS));
+                            circle.setRadiusInMeters(radius);
+                        }
+                        if (circle_dataInfo.has(JsConst.ISDISTANCESORT)){
+                            boolean isDistanceSort = Boolean.valueOf(
+                                    circle_dataInfo.getString(JsConst.ISDISTANCESORT));
+                            circle.setDistanceSort(isDistanceSort);
+                        }
+                        bean.setSearchBound(circle);
+                    }else if(type.equals(BoundBaseBean.TYPE_RECTANGLE)){
+                        JSONObject rectangle_dataInfo = boundJson.getJSONObject(JsConst.DATAINFO);
+                        JSONObject lowerLeftJson = rectangle_dataInfo
+                                .getJSONObject(JsConst.LOWERLEFT);
+                        double llLongitude = Double.valueOf(
+                                lowerLeftJson.getString(JsConst.LONGITUDE));
+                        double llLatitude = Double.valueOf(
+                                lowerLeftJson.getString(JsConst.LATITUDE));
+                        LatLonPoint ll = new LatLonPoint(llLatitude, llLongitude);
+                        JSONObject upperRightJson = rectangle_dataInfo
+                                .getJSONObject(JsConst.UPPERRIGHT);
+                        double urLongitude = Double.valueOf(
+                                upperRightJson.getString(JsConst.LONGITUDE));
+                        double urLatitude = Double.valueOf(
+                                upperRightJson.getString(JsConst.LATITUDE));
+                        LatLonPoint ur = new LatLonPoint(urLatitude, urLongitude);
+                        RectangleBoundBean rectangle = new RectangleBoundBean(
+                                BoundBaseBean.TYPE_RECTANGLE);
+                        rectangle.setLowerLeft(ll);
+                        rectangle.setUpperRight(ur);
+                        bean.setSearchBound(rectangle);
+                    }else if (type.equals(BoundBaseBean.TYPE_POLYGON)){
+                        JSONArray dataArray = boundJson.getJSONArray(JsConst.DATAINFO);
+                        PolygonBoundBean polygon = new PolygonBoundBean(BoundBaseBean.TYPE_POLYGON);
+                        List<LatLonPoint> list = new ArrayList<LatLonPoint>();
+                        for (int i = 0; i < dataArray.length(); i++){
+                            JSONObject item = new JSONObject(dataArray.optString(i));
+                            double itemLng = Double.valueOf(item.getString(JsConst.LONGITUDE));
+                            double itemLat = Double.valueOf(item.getString(JsConst.LATITUDE));
+                            LatLonPoint point = new LatLonPoint(itemLat, itemLng);
+                            list.add(point);
+                        }
+                        polygon.setList(list);
+                        bean.setSearchBound(polygon);
                     }
                 }
             }
