@@ -486,21 +486,17 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
             if (bean.getSearchBound() != null){
                 PoiSearch.SearchBound bound = null;
                 BoundBaseBean boundBaseBean = bean.getSearchBound();
-                switch (boundBaseBean.getType()){
-                    case BoundBaseBean.TYPE_CIRCLE:
-                        CircleBoundBean circle = (CircleBoundBean) boundBaseBean;
-                        bound = new PoiSearch.SearchBound(circle.getCenter(),
-                                circle.getRadiusInMeters(), circle.isDistanceSort());
-                        break;
-                    case BoundBaseBean.TYPE_RECTANGLE:
-                        RectangleBoundBean rectangle = (RectangleBoundBean) boundBaseBean;
-                        bound = new PoiSearch.SearchBound(rectangle.getLowerLeft(),
-                                rectangle.getUpperRight());
-                        break;
-                    case BoundBaseBean.TYPE_POLYGON:
-                        PolygonBoundBean polygon = (PolygonBoundBean) boundBaseBean;
-                        bound = new PoiSearch.SearchBound(polygon.getList());
-                        break;
+                if(boundBaseBean.getType().equals(BoundBaseBean.TYPE_CIRCLE)){
+                    CircleBoundBean circle = (CircleBoundBean) boundBaseBean;
+                    bound = new PoiSearch.SearchBound(circle.getCenter(),
+                            circle.getRadiusInMeters(), circle.isDistanceSort());
+                }else if(boundBaseBean.getType().equals(BoundBaseBean.TYPE_RECTANGLE)){
+                    RectangleBoundBean rectangle = (RectangleBoundBean) boundBaseBean;
+                    bound = new PoiSearch.SearchBound(rectangle.getLowerLeft(),
+                            rectangle.getUpperRight());
+                }else if(boundBaseBean.getType().equals(BoundBaseBean.TYPE_POLYGON)){
+                    PolygonBoundBean polygon = (PolygonBoundBean) boundBaseBean;
+                    bound = new PoiSearch.SearchBound(polygon.getList());
                 }
                 search.setBound(bound);
             }
