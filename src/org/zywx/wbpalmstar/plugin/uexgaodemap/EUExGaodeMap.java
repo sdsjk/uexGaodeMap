@@ -148,49 +148,55 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private void openMsg(final String[] params) {
         if (getAMapActivity() != null){
             close(null);
-        }
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                String json = params[0];
-                int left = 0;
-                int top = 0;
-                int width = -1;
-                int height = -1;
-                Intent intent = new Intent();
-                intent.setClass(mContext, AMapBasicActivity.class);
-                try {
-                    JSONObject jsonObject = new JSONObject(json);
-                    left = Integer.valueOf(jsonObject.getString(JsConst.LEFT));
-                    top = Integer.valueOf(jsonObject.getString(JsConst.TOP));
-                    width = Integer.valueOf(jsonObject.getString(JsConst.WIDTH));
-                    height = Integer.valueOf(jsonObject.getString(JsConst.HEIGHT));
-                    if (jsonObject.has(JsConst.LONGITUDE)
-                            && jsonObject.has(JsConst.LATITUDE)){
-                        double longitude = Double.valueOf(jsonObject.getString(JsConst.LONGITUDE));
-                        double latitude = Double.valueOf(jsonObject.getString(JsConst.LATITUDE));
-                        double[] latlng = new double[2];
-                        latlng[0] = longitude;
-                        latlng[1] = latitude;
-                        intent.putExtra(JsConst.LATLNG, latlng);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    left = 0;
-                    top = 0;
-                    width = -1;
-                    height = -1;
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    openAMap(params);
                 }
-                intent.putExtra("callback", EUExGaodeMap.this);
-                Window window = mgr.startActivity(getActivityTag(), intent);
-                View decorView = window.getDecorView();
-                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
-                lp.leftMargin = left;
-                lp.topMargin = top;
-                addView2CurrentWindow(decorView, lp);
-            }
-        }, 500);
+            }, 500);
+        }else{
+            openAMap(params);
+        }
 
+    }
+
+    private void openAMap(final String[] params){
+        String json = params[0];
+        int left = 0;
+        int top = 0;
+        int width = -1;
+        int height = -1;
+        Intent intent = new Intent();
+        intent.setClass(mContext, AMapBasicActivity.class);
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            left = Integer.valueOf(jsonObject.getString(JsConst.LEFT));
+            top = Integer.valueOf(jsonObject.getString(JsConst.TOP));
+            width = Integer.valueOf(jsonObject.getString(JsConst.WIDTH));
+            height = Integer.valueOf(jsonObject.getString(JsConst.HEIGHT));
+            if (jsonObject.has(JsConst.LONGITUDE)
+                    && jsonObject.has(JsConst.LATITUDE)){
+                double longitude = Double.valueOf(jsonObject.getString(JsConst.LONGITUDE));
+                double latitude = Double.valueOf(jsonObject.getString(JsConst.LATITUDE));
+                double[] latlng = new double[2];
+                latlng[0] = longitude;
+                latlng[1] = latitude;
+                intent.putExtra(JsConst.LATLNG, latlng);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            left = 0;
+            top = 0;
+            width = -1;
+            height = -1;
+        }
+        intent.putExtra("callback", EUExGaodeMap.this);
+        Window window = mgr.startActivity(getActivityTag(), intent);
+        View decorView = window.getDecorView();
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
+        lp.leftMargin = left;
+        lp.topMargin = top;
+        addView2CurrentWindow(decorView, lp);
     }
 
     public void close(String[] params) {

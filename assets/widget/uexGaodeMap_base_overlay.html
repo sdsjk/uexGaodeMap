@@ -57,6 +57,12 @@
                  uexGaodeMap.onMarkerBubbleClickListener = onMarkerBubbleListener;
                  uexGaodeMap.onMapLoadedListener = onMapLoadedListener;
                  uexGaodeMap.onMarkerClickListener = onMarkerClickListener;
+                uexWindow.setReportKey(0,1);
+                uexWindow.onKeyPressed = function(keyCode){
+                    if(keyCode == 0){
+                        closeWin();
+                    }
+                }
 
              }
         function onMarkerClickListener(info){

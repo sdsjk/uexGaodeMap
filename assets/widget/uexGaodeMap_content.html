@@ -30,16 +30,26 @@
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript">
     function openTest(name){
+        if(name == "uexWindow"){
+            openNewWin("uexWindow", "uexWindow.html?index=1&page=wind");
+        }else{
+            openNewWin(name, name+".html");
+        }
+    }
+    window.uexOnload = function(){
+                /*var params = {
+                    left:100,
+                    top:200,
+                    width:800,
+                    height:800,
+                    longitude:114.402815,
+                    latitude:30.475798
+                };
+                var data = JSON.stringify(params);
+                uexGaodeMap.open(data);*/
+    }
 
-            if(name == "uexWindow"){
-                openNewWin("uexWindow", "uexWindow.html?index=1&page=wind");
-            }else{
-                openNewWin(name, name+".html");
-            }
-        }    
-
-
-        </script>
+    </script>
   </head>
 <body class="um-vp " ontouchstart>
     <div class="conbor">
