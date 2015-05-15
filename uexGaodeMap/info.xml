@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexGaodeMap" version="3.0.0" build="0">
-        <info>0:高德地图插件</info>
+        uexName="uexGaodeMap" version="3.0.1" build="1">
+        <info>1:插件包添加dex文件夹</info>
+        <bulid>0:高德地图插件</bulid>
     </plugin>
 </uexplugins>
