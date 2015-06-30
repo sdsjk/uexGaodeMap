@@ -58,7 +58,7 @@
             function openmap(){
                 var divTop = document.getElementById("topDiv").offsetTop + document.getElementById("topDiv").offsetHeight + 60;
                 var w = screen.availWidth-20;
-                var h = screen.availHeight/2;
+                var h = screen.availHeight-divTop;
                 var params = {
                     left:10,
                     top:divTop,
@@ -110,6 +110,25 @@
                 var data = JSON.stringify(params);
                 uexGaodeMap.setOverlookEnable(data);
             }
+
+            function setZoomVisible(visible){
+                var params = {
+                    visible:visible
+                };
+                uexGaodeMap.setZoomVisible(JSON.stringify(params));
+            }
+            function setMyLocationButtonVisible(visible){
+                var params = {
+                    visible:visible
+                };
+                uexGaodeMap.setMyLocationButtonVisible(JSON.stringify(params));
+            }
+            function setScaleVisible(visible){
+                var params = {
+                    visible:visible
+                };
+                uexGaodeMap.setScaleVisible(JSON.stringify(params));
+            }
     </script>
 </head>
 <body class="um-vp " ontouchstart>
@@ -130,27 +149,35 @@
      <div class="conbor">
         <div class="consj" id="topDiv">
         
-        <input type="button" value="打开" onclick="openmap();">
-        <input type="button" value="关闭" onclick="closeMap();"><br>
-        
-        <input type="button" value="开启缩放" onclick="setZoomEnable(1);">
-        <input type="button" value="关闭缩放" onclick="setZoomEnable(0);"><br>
-        
-        <input type="button" value="开启旋转" onclick="setRotateEnable(1);">
-        <input type="button" value="关闭旋转" onclick="setRotateEnable(0);"><br>
-        
-        <input type="button" value="开启指南针" onclick="setCompassEnable(1);">
-        <input type="button" value="关闭指南针" onclick="setCompassEnable(0);"><br>
-        
-        <input type="button" value="开启平移" onclick="setScrollEnable(1);">
-        <input type="button" value="关闭平移" onclick="setScrollEnable(0);"><br>
+            <input type="button" value="打开" onclick="openmap();">
+            <input type="button" value="关闭" onclick="closeMap();">
 
-        <p></p><br>  
+            <input type="button" value="开启缩放" onclick="setZoomEnable(1);">
+            <input type="button" value="关闭缩放" onclick="setZoomEnable(0);">
+
+            <input type="button" value="开启旋转" onclick="setRotateEnable(1);">
+            <input type="button" value="关闭旋转" onclick="setRotateEnable(0);">
+
+            <input type="button" value="开启指南针" onclick="setCompassEnable(1);">
+            <input type="button" value="关闭指南针" onclick="setCompassEnable(0);">
+
+            <input type="button" value="开启平移" onclick="setScrollEnable(1);">
+            <input type="button" value="关闭平移" onclick="setScrollEnable(0);">
+
+            <input type="button" value="显示缩放" onclick="setZoomVisible(true)">
+            <input type="button" value="隐藏缩放" onclick="setZoomVisible(false)">
+
+            <input type="button" value="显示位置按钮" onclick="setMyLocationButtonVisible(true);">
+            <input type="button" value="隐藏位置按钮" onclick="setMyLocationButtonVisible(false);">
+
+            <input type="button" value="显示比例尺" onclick="setScaleVisible(true);">
+            <input type="button" value="隐藏比例尺" onclick="setScaleVisible(false);">
                 
         </div>
       </div>
         
          
+    </div>
     </div>
 </body>
 <script>

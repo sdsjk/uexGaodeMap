@@ -106,12 +106,18 @@
             }
 
             function removeOverLayer() {
+                var params = [];
+                var data = JSON.stringify(params);
+                uexGaodeMap.removeMarkersOverlays(data);
+            }
+
+            /*function removeOverLayers() {
                 var params = {
-                    id:10001
+                    id:"10001"
                 };
                 var data = JSON.stringify(params);
                 uexGaodeMap.removeMarkersOverlay(data);
-            }
+            }*/
 
             function hideBubble(){
                 uexGaodeMap.hideBubble();
@@ -304,10 +310,16 @@
             function clearOver(type){
                 var idarr = {
                     id:type
-                };
+                }
                 var data = JSON.stringify(idarr);
                 uexGaodeMap.removeOverlay(data);
             }
+
+            /*function clearOvers(type){
+                var idarr = [type];
+                var data = JSON.stringify(idarr);
+                uexGaodeMap.removeOverlays(data);
+            }*/
 
     </script>
 </head>
@@ -348,6 +360,7 @@
                 <input type="button" value="清多边形" onclick="clearOver('154');">
                 <input type="button" value="地形图" onclick="addGround();">
                 <input type="button" value="清地形图" onclick="clearOver('155');">
+                  <input type="button" value="清除所有覆盖物" onclick="uexGaodeMap.removeOverlays()">
                 <!--<input type="button" value="圆点" onclick="addDot();">
                 <input type="button" value="清圆点" onclick="clearOver('150');">
                 <input type="button" value="文字" onclick="addText();">

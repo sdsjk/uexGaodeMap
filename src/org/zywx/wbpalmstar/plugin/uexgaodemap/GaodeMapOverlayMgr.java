@@ -36,8 +36,10 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.overlay.PolylineOverlay;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
 
@@ -76,9 +78,40 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
     }
 
     public void removeOverlay(String id){
+        if (TextUtils.isEmpty(id)){
+            removeAllOverlays();
+        }else{
+            remove(id);
+        }
+    }
+
+    private void remove(String id){
         BaseOverlay overlay = mOverlays.get(id);
         if (overlay != null){
             overlay.clearOverlay();
+        }
+        removeFromList(id);
+    }
+
+    private void removeFromList(String id) {
+        Iterator<String> iterator = mOverlays.keySet().iterator();
+        while (iterator.hasNext()){
+            final String item = iterator.next();
+            if (id.equals(item)){
+                iterator.remove();
+            }
+        }
+    }
+
+    private void removeAllOverlays(){
+        List<String> list = new ArrayList<String>();
+        Iterator<String> iterator = mOverlays.keySet().iterator();
+        while (iterator.hasNext()){
+            String id = iterator.next();
+            list.add(id);
+        }
+        for (int i = 0; i < list.size(); i ++){
+            remove(list.get(i));
         }
     }
 
