@@ -30,6 +30,7 @@ import com.amap.api.services.poisearch.PoiSearch;
 import com.amap.api.services.poisearch.PoiSearch.Query;
 
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.ArcBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.BoundBaseBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBean;
@@ -249,6 +250,24 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
         }
     }
 
+    public void setScaleVisible(VisibleVO vo) {
+        if (aMap != null){
+            settings.setScaleControlsEnabled(vo.isVisible());
+        }
+    }
+
+    public void setMyLocationButtonVisible(VisibleVO vo) {
+        if (aMap != null){
+            settings.setMyLocationButtonEnabled(vo.isVisible());
+        }
+    }
+
+    public void setZoomVisible(VisibleVO vo) {
+        if (aMap != null){
+            settings.setZoomControlsEnabled(vo.isVisible());
+        }
+    }
+
     public void addMarkersOverlay(List<MarkerBean> list){
         markerMgr.addMarkers(list);
     }
@@ -316,6 +335,26 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
     public void onMapLongClick(LatLng latLng) {
         if (mListener != null && latLng != null){
             mListener.onMapLongClick(latLng);
+        }
+    }
+
+    public void removeOverlays(List<String> list) {
+        if (list == null || list.size() == 0){
+            removeOverlay(null);
+        }else{
+            for (int i = 0; i < list.size(); i++){
+                removeOverlay(list.get(i));
+            }
+        }
+    }
+
+    public void removeMarkersOverlays(List<String> list) {
+        if (list == null || list.size() == 0){
+            removeMarkersOverlay(null);
+        }else{
+            for (int i = 0; i < list.size(); i++){
+                removeMarkersOverlay(list.get(i));
+            }
         }
     }
 

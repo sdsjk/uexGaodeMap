@@ -37,5 +37,11 @@
         <method name="stopLocation" />
         <method name="setMyLocationEnable" />
         <method name="setUserTrackingMode" />
+        <method name = "setScaleVisible"/>
+        <method name = "setMyLocationButtonVisible"/>
+        <method name = "setZoomVisible"/>
+
+        <method name="removeMarkersOverlays" />
+        <method name="removeOverlays"/>
     </plugin>
 </uexplugins>

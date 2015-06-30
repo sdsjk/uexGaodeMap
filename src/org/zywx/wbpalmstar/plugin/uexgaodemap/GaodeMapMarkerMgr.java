@@ -22,6 +22,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +39,9 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
     }
 
     public void addMarkers(List<MarkerBean> list){
+        if (list == null || list.size() < 1){
+            return;
+        }
         for (int i = 0; i < list.size(); i++) {
             final MarkerBean bean = list.get(i);
             final MarkerOptions option = new MarkerOptions();
@@ -165,10 +169,43 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
         }
     }
 
+
+
     public void removeMarker(String id) {
+        if (TextUtils.isEmpty(id)){
+            removeAllMarker();
+        }else{
+            remove(id);
+        }
+    }
+
+    private void remove(String id){
         Marker marker = mMarkers.get(id);
         if (marker != null){
             marker.remove();
+        }
+        removeMarkerFromList(id);
+    }
+
+    private void removeMarkerFromList(String id) {
+        Iterator<String> iterator = mMarkers.keySet().iterator();
+        while (iterator.hasNext()){
+            final String item = iterator.next();
+            if (id.equals(item)){
+                iterator.remove();
+            }
+        }
+    }
+
+    private void removeAllMarker(){
+        List<String> list = new ArrayList<String>();
+        Iterator<String> iterator = mMarkers.keySet().iterator();
+        while (iterator.hasNext()){
+            String id = iterator.next();
+            list.add(id);
+        }
+        for (int i = 0; i < list.size(); i ++){
+            remove(list.get(i));
         }
     }
 

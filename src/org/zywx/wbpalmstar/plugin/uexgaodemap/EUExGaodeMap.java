@@ -46,6 +46,7 @@ import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.ArcBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.BoundBaseBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBean;
@@ -118,6 +119,11 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private static final int MSG_REMOVE_OVERLAY = 48;
     private static final int MSG_POI_SEARCH_DETAIL = 49;
     private static final long serialVersionUID = 4361331124195620438L;
+    private static final int MSG_SET_SCALE_VISIBLE = 50;
+    private static final int MSG_SET_MY_LOCATION_BUTTON_VISIBLE = 51;
+    private static final int MSG_SET_ZOOM_VISIBLE = 52;
+    private static final int MSG_REMOVE_MARKERS_OVERLAYS = 53;
+    private static final int MSG_REMOVE_OVERLAYS = 54;
 
     private static LocalActivityManager mgr;
 
@@ -1661,6 +1667,116 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         }
     }
 
+    public void setScaleVisible(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_SET_SCALE_VISIBLE;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void setScaleVisibleMsg(String[] params) {
+        String json = params[0];
+        VisibleVO vo = DataHelper.gson.fromJson(json, VisibleVO.class);
+        if (getAMapActivity() != null){
+            getAMapActivity().setScaleVisible(vo);
+        }
+    }
+
+    public void setMyLocationButtonVisible(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_SET_MY_LOCATION_BUTTON_VISIBLE;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void setMyLocationButtonVisibleMsg(String[] params) {
+        String json = params[0];
+        VisibleVO vo = DataHelper.gson.fromJson(json, VisibleVO.class);
+        if (getAMapActivity() != null){
+            getAMapActivity().setMyLocationButtonVisible(vo);
+        }
+    }
+
+    public void setZoomVisible(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_SET_ZOOM_VISIBLE;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void setZoomVisibleMsg(String[] params) {
+        String json = params[0];
+        VisibleVO vo = DataHelper.gson.fromJson(json, VisibleVO.class);
+        if (getAMapActivity() != null){
+            getAMapActivity().setZoomVisible(vo);
+        }
+    }
+
+    public void removeMarkersOverlays(String[] params) {
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_REMOVE_MARKERS_OVERLAYS;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void removeMarkersOverlaysMsg(String[] params) {
+        List<String> list = null;
+        if (params != null && params.length > 0){
+            String json = params[0];
+            list = DataHelper.gson.fromJson(json,
+                    new TypeToken<List<String>>(){}.getType());
+        }
+        if (getAMapActivity() != null){
+            getAMapActivity().removeMarkersOverlays(list);
+        }
+    }
+
+    public void removeOverlays(String[] params) {
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_REMOVE_OVERLAYS;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void removeOverlaysMsg(String[] params) {
+        List<String> list = null;
+        if (params != null && params.length > 0){
+            String json = params[0];
+            list = DataHelper.gson.fromJson(json,
+                    new TypeToken<List<String>>(){}.getType());
+        }
+        if (getAMapActivity() != null){
+            getAMapActivity().removeOverlays(list);
+        }
+    }
+
     @Override
     public void onHandleMessage(Message message) {
         if(message == null){
@@ -1815,6 +1931,21 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 break;
             case MSG_POI_SEARCH_DETAIL:
                 poiSearchDetailMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_SET_SCALE_VISIBLE:
+                setScaleVisibleMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_SET_MY_LOCATION_BUTTON_VISIBLE:
+                setMyLocationButtonVisibleMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_SET_ZOOM_VISIBLE:
+                setZoomVisibleMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_REMOVE_MARKERS_OVERLAYS:
+                removeMarkersOverlaysMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_REMOVE_OVERLAYS:
+                removeOverlaysMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
             default:
                 super.onHandleMessage(message);
