@@ -17,6 +17,8 @@ import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.LatLngBounds;
+import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.overlay.PoiOverlay;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.geocoder.GeocodeQuery;
@@ -30,6 +32,7 @@ import com.amap.api.services.poisearch.PoiSearch;
 import com.amap.api.services.poisearch.PoiSearch.Query;
 
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleBoundsVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.ArcBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.BoundBaseBean;
@@ -62,6 +65,8 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
     private GaodeLocationListener mLocationListener;
     private GeocodeSearch geocodeSearch;
     private boolean isShowOverlay = false;
+    private List<LatLng> mOverlays;
+    //private LatLngBounds mBounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +89,35 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
         aMap.setOnMapClickListener(this);
         aMap.setOnMapLongClickListener(this);
         mCenter = intent.getDoubleArrayExtra(JsConst.LATLNG);
-        markerMgr = new GaodeMapMarkerMgr(this, aMap, mListener);
-        overlayMgr = new GaodeMapOverlayMgr(this, aMap, mListener);
+        markerMgr = new GaodeMapMarkerMgr(this, aMap, mListener, mOverlays);
+        overlayMgr = new GaodeMapOverlayMgr(this, aMap, mListener, mOverlays);
         aMap.setOnMarkerClickListener(markerMgr);
         aMap.setOnInfoWindowClickListener(markerMgr);
+    }
+
+    public void setOverlayVisibleBounds(VisibleBoundsVO data){
+        if (mOverlays != null && mOverlays.size() > 0){
+            LatLngBounds.Builder builder = LatLngBounds.builder();
+            for (int i = 0; i < mOverlays.size(); i++){
+                LatLng item = mOverlays.get(i);
+                builder.include(item);
+            }
+            aMap.moveCamera(CameraUpdateFactory.newLatLngBounds(
+                    builder.build(), data.getPadding()));
+        }
+    }
+
+    public void setMarkerVisibleBounds(VisibleBoundsVO data){
+        List<Marker> list = aMap.getMapScreenMarkers();
+        if (list != null && list.size() > 0){
+            LatLngBounds.Builder builder = LatLngBounds.builder();
+            for (int i = 0; i < list.size(); i++){
+                LatLng item = list.get(i).getPosition();
+                builder.include(item);
+            }
+            aMap.moveCamera(CameraUpdateFactory.newLatLngBounds(
+                    builder.build(), data.getPadding()));
+        }
     }
 
     /**
@@ -99,6 +129,9 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
         }
         if (settings == null){
             settings = aMap.getUiSettings();
+        }
+        if (mOverlays == null){
+            mOverlays = new ArrayList<LatLng>();
         }
         aMap.setLocationSource(this);
     }
@@ -355,6 +388,12 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
             for (int i = 0; i < list.size(); i++){
                 removeMarkersOverlay(list.get(i));
             }
+        }
+    }
+
+    public void clear() {
+        if (aMap != null){
+            aMap.clear();
         }
     }
 

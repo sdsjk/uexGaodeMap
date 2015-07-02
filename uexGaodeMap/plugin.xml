@@ -43,5 +43,7 @@
 
         <method name="removeMarkersOverlays" />
         <method name="removeOverlays"/>
+
+        <method name="clear"/>
     </plugin>
 </uexplugins>

@@ -44,5 +44,9 @@
 
         <method name="removeMarkersOverlays" />
         <method name="removeOverlays"/>
+
+        <method name="setMarkerVisibleBounds"/>
+        <method name="clear"/>
+
     </plugin>
 </uexplugins>

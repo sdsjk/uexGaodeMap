@@ -46,6 +46,7 @@ import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleBoundsVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.ArcBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.BoundBaseBean;
@@ -124,6 +125,9 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private static final int MSG_SET_ZOOM_VISIBLE = 52;
     private static final int MSG_REMOVE_MARKERS_OVERLAYS = 53;
     private static final int MSG_REMOVE_OVERLAYS = 54;
+    private static final int MSG_SET_OVERLAY_VISIBLE_BOUNDS = 55;
+    private static final int MSG_SET_MARKER_VISIBLE_BOUNDS = 56;
+    private static final int MSG_CLEAR = 57;
 
     private static LocalActivityManager mgr;
 
@@ -1777,6 +1781,62 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         }
     }
 
+    public void setOverlayVisibleBounds(String[] params) {
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_SET_OVERLAY_VISIBLE_BOUNDS;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void setOverlayVisibleBoundsMsg(String[] params) {
+        VisibleBoundsVO data = new VisibleBoundsVO();
+        if (params != null && params.length > 0){
+            data = DataHelper.gson.fromJson(params[0], VisibleBoundsVO.class);
+        }
+        if (getAMapActivity() != null){
+            getAMapActivity().setOverlayVisibleBounds(data);
+        }
+    }
+
+    public void setMarkerVisibleBounds(String[] params) {
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_SET_MARKER_VISIBLE_BOUNDS;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void setMarkerVisibleBoundsMsg(String[] params) {
+        VisibleBoundsVO data = new VisibleBoundsVO();
+        if (params != null && params.length > 0){
+            data = DataHelper.gson.fromJson(params[0], VisibleBoundsVO.class);
+        }
+        if (getAMapActivity() != null){
+            getAMapActivity().setMarkerVisibleBounds(data);
+        }
+    }
+
+    public void clear(String[] params) {
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_CLEAR;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void clearMsg() {
+        if (getAMapActivity() != null){
+            getAMapActivity().clear();
+        }
+    }
+
     @Override
     public void onHandleMessage(Message message) {
         if(message == null){
@@ -1946,6 +2006,15 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 break;
             case MSG_REMOVE_OVERLAYS:
                 removeOverlaysMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_SET_OVERLAY_VISIBLE_BOUNDS:
+                setOverlayVisibleBoundsMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_SET_MARKER_VISIBLE_BOUNDS:
+                setMarkerVisibleBoundsMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_CLEAR:
+                clearMsg();
                 break;
             default:
                 super.onHandleMessage(message);

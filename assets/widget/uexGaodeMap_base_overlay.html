@@ -320,7 +320,13 @@
                 var data = JSON.stringify(idarr);
                 uexGaodeMap.removeOverlays(data);
             }*/
-
+    function setMarkerVisibleBounds(){
+        var params = {
+            padding:100
+        };
+        var data = JSON.stringify(params);
+        uexGaodeMap.setMarkerVisibleBounds(data);
+    }
     </script>
 </head>
 <body class="um-vp " ontouchstart>
@@ -360,7 +366,8 @@
                 <input type="button" value="清多边形" onclick="clearOver('154');">
                 <input type="button" value="地形图" onclick="addGround();">
                 <input type="button" value="清地形图" onclick="clearOver('155');">
-                  <input type="button" value="清除所有覆盖物" onclick="uexGaodeMap.removeOverlays()">
+                  <input type="button" value="清除所有" onclick="uexGaodeMap.clear()">
+                  <!--<input type="button" value="设置标注可视区域" onclick="setMarkerVisibleBounds();">
                 <!--<input type="button" value="圆点" onclick="addDot();">
                 <input type="button" value="清圆点" onclick="clearOver('150');">
                 <input type="button" value="文字" onclick="addText();">
