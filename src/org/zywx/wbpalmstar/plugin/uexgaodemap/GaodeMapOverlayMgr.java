@@ -13,6 +13,7 @@ import com.amap.api.maps.model.Circle;
 import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.GroundOverlay;
 import com.amap.api.maps.model.GroundOverlayOptions;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Polygon;
 import com.amap.api.maps.model.PolygonOptions;
 import com.amap.api.maps.model.Polyline;
@@ -45,10 +46,13 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
 
     private static HashMap<String, BaseOverlay> mOverlays = new HashMap<String, BaseOverlay>();
     private ImageLoaderManager manager;
+    private List<LatLng> mBoundsOverlays;
 
-    public GaodeMapOverlayMgr(Context mContext, AMap map, OnCallBackListener mListener) {
+    public GaodeMapOverlayMgr(Context mContext, AMap map,
+                              OnCallBackListener mListener, List<LatLng> overlays) {
         super(mContext, map, mListener);
         manager = ImageLoaderManager.initImageLoaderManager(mContext);
+        this.mBoundsOverlays = overlays;
     }
 
     public void addArc(ArcBean bean){
@@ -60,7 +64,27 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
             if (arc != null){
                 arcOverlay.setArc(arc);
                 mOverlays.put(bean.getId(), arcOverlay);
+                if (mBoundsOverlays != null){
+                    LatLng start = options.getStart();
+                    LatLng center = options.getPassed();
+                    LatLng end = options.getEnd();
+                    addToBoundsList(start);
+                    addToBoundsList(center);
+                    addToBoundsList(end);
+                }
             }
+        }
+    }
+
+    private void addToBoundsList(LatLng latLng){
+        if (latLng != null && !mBoundsOverlays.contains(latLng)){
+            mBoundsOverlays.add(latLng);
+        }
+    }
+
+    private void removeFromBoundsList(LatLng latLng){
+        if (latLng != null && mBoundsOverlays.contains(latLng)){
+            mOverlays.remove(latLng);
         }
     }
 

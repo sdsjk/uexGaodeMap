@@ -10,8 +10,11 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnInfoWindowClickListener;
 import com.amap.api.maps.AMap.OnMarkerClickListener;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 
@@ -32,10 +35,13 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
     private static final String TAG = "GaodeMapMarkerMgr";
     private static HashMap<String, Marker> mMarkers = new HashMap<String, Marker>();
     private ImageLoaderManager manager;
+    private List<LatLng> mOverlays;
 
-    public GaodeMapMarkerMgr(Context cxt, AMap map, OnCallBackListener listener) {
+    public GaodeMapMarkerMgr(Context cxt, AMap map,
+                             OnCallBackListener listener, List<LatLng> markers) {
         super(cxt, map, listener);
         manager = ImageLoaderManager.initImageLoaderManager(mContext);
+        this.mOverlays = markers;
     }
 
     public void addMarkers(List<MarkerBean> list){
@@ -79,6 +85,7 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
         if (option != null && map != null){
             Marker marker = map.addMarker(option);
             mMarkers.put(id, marker);
+            addToBoundsList(marker.getPosition());
         }
     }
 
@@ -185,6 +192,19 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
             marker.remove();
         }
         removeMarkerFromList(id);
+        removeFromBoundsList(marker.getPosition());
+    }
+
+    private void addToBoundsList(LatLng latLng){
+        if (latLng != null && !mOverlays.contains(latLng)){
+            mOverlays.add(latLng);
+        }
+    }
+
+    private void removeFromBoundsList(LatLng latLng){
+        if (latLng != null && mOverlays.contains(latLng)){
+            mOverlays.remove(latLng);
+        }
     }
 
     private void removeMarkerFromList(String id) {
