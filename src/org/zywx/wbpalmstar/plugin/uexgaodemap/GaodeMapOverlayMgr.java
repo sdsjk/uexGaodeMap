@@ -113,8 +113,8 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
         BaseOverlay overlay = mOverlays.get(id);
         if (overlay != null){
             overlay.clearOverlay();
+            removeFromList(id);
         }
-        removeFromList(id);
     }
 
     private void removeFromList(String id) {
