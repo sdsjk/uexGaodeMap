@@ -394,6 +394,8 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
     public void clear() {
         if (aMap != null){
             aMap.clear();
+            markerMgr.clearAll();
+            overlayMgr.clearAll();
         }
     }
 

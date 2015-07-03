@@ -82,7 +82,7 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
     }
 
     private void addMark(String id, MarkerOptions option) {
-        if (option != null && map != null){
+        if (option != null && map != null && !mMarkers.containsKey(id)){
             Marker marker = map.addMarker(option);
             mMarkers.put(id, marker);
             addToBoundsList(marker.getPosition());
@@ -190,9 +190,9 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
     private void remove(String id){
         Marker marker = mMarkers.get(id);
         if (marker != null){
+            removeFromBoundsList(marker.getPosition());
             marker.remove();
             removeMarkerFromList(id);
-            removeFromBoundsList(marker.getPosition());
         }
     }
 
@@ -238,5 +238,9 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
     @Override
     public View getInfoContents(Marker marker) {
         return null;
+    }
+
+    public void clearAll() {
+        mMarkers.clear();
     }
 }
