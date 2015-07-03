@@ -115,6 +115,7 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
 
     public void updateMarker(MarkerBean bean) {
         final Marker marker = mMarkers.get(bean.getId());
+        if (marker == null) return;
         final boolean isShowInfoWindow = marker.isInfoWindowShown();
         if (!TextUtils.isEmpty(bean.getIcon())){
             manager.asyncLoad(new ImageLoadTask(bean.getIcon()) {
@@ -190,9 +191,9 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
         Marker marker = mMarkers.get(id);
         if (marker != null){
             marker.remove();
+            removeMarkerFromList(id);
+            removeFromBoundsList(marker.getPosition());
         }
-        removeMarkerFromList(id);
-        removeFromBoundsList(marker.getPosition());
     }
 
     private void addToBoundsList(LatLng latLng){
