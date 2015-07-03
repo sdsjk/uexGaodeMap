@@ -56,7 +56,7 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
     }
 
     public void addArc(ArcBean bean){
-        if (bean == null) return;
+        if (bean == null || mOverlays.containsKey(bean.getId())) return;
         ArcOverlay arcOverlay = new ArcOverlay();
         ArcOptions options = bean.getData();
         if (options != null){
@@ -89,7 +89,7 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
     }
 
     public void addPolylines(PolylineBean bean){
-        if (bean == null) return;
+        if (bean == null || mOverlays.containsKey(bean.getId())) return;
         PolylineOverlay polylineOverlay = new PolylineOverlay();
         PolylineOptions option = bean.getData();
         if (option != null){
@@ -140,7 +140,7 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
     }
 
     public void addCircle(CircleBean bean) {
-        if (bean == null) return;
+        if (bean == null || mOverlays.containsKey(bean.getId())) return;
         CircleOverlay circleOverlay = new CircleOverlay();
         CircleOptions option = bean.getData();
         if (option != null){
@@ -153,7 +153,7 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
     }
 
     public void addPolygon(PolygonBean bean) {
-        if (bean == null) return;
+        if (bean == null || mOverlays.containsKey(bean.getId())) return;
         PolygonOverlay polygonOverlay = new PolygonOverlay();
         PolygonOptions option = bean.getData();
         if (option != null){
@@ -166,7 +166,7 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
     }
 
     public void addGround(final GroundBean bean) {
-        if (bean == null) return;
+        if (bean == null || mOverlays.containsKey(bean.getId())) return;
         final GroundNOverlay groundOverlay = new GroundNOverlay();
         final GroundOverlayOptions option = bean.getData();
         if (option != null && !TextUtils.isEmpty(bean.getImageUrl())){
@@ -200,5 +200,9 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
                 overlay.clearOverlay();
             }
         }
+    }
+
+    public void clearAll() {
+        mOverlays.clear();
     }
 }
