@@ -33,7 +33,7 @@ import java.util.List;
 public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickListener, OnInfoWindowClickListener, InfoWindowAdapter {
 
     private static final String TAG = "GaodeMapMarkerMgr";
-    private static HashMap<String, Marker> mMarkers = new HashMap<String, Marker>();
+    private HashMap<String, Marker> mMarkers = new HashMap<String, Marker>();
     private ImageLoaderManager manager;
     private List<LatLng> mOverlays;
 
@@ -91,7 +91,6 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Log.i(TAG,"onMarkerClick->isShowBubble = " + marker.isInfoWindowShown());
         String id = getMarkerId(marker.getId());
         if (mListener != null){
             mListener.onMarkerClicked(id);
@@ -176,8 +175,6 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
             mListener.onBubbleClicked(id);
         }
     }
-
-
 
     public void removeMarker(String id) {
         if (TextUtils.isEmpty(id)){

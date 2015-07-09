@@ -66,7 +66,6 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
     private GeocodeSearch geocodeSearch;
     private boolean isShowOverlay = false;
     private List<LatLng> mOverlays;
-    //private LatLngBounds mBounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +167,11 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
      */
     @Override
     protected void onDestroy() {
+        if (aMap != null){
+            aMap.clear();
+        }
         overlayMgr.clean();
+        markerMgr.clearAll();
         stopLocation();
         super.onDestroy();
         mapView.onDestroy();
