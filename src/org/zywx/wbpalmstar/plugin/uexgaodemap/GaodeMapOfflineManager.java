@@ -61,6 +61,9 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         if (offlineMapManager == null){
             offlineMapManager = new OfflineMapManager(mContext, this);
         }
+        if (mAvailableList != null){
+            mAvailableList.clear();
+        }
         List<OfflineMapProvince> all = offlineMapManager.getOfflineMapProvinceList();
         for (int i = 0; i < all.size(); i++){
             OfflineMapProvince item = all.get(i);
@@ -92,7 +95,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         }
         DownloadResultVO data = new DownloadResultVO();
         data.setName(downloadVO.getName());
-        if(isDownloading(downloadVO.getName())){
+        if(isDownloading(downloadVO.getName()) && !isDownloadingError(downloadVO.getName())){
             data.setErrorCode(JsConst.ERROR_IS_EXIST);
             data.setErrorStr(EUExUtil.getString("plugin_uexgaodemap_is_exist"));
         }else if(isDownload(downloadVO.getName()) && !isNeedUpdate(downloadVO)){
@@ -102,7 +105,12 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
             data.setErrorCode(JsConst.ERROR_WRONG_CITY_NAME);
             data.setErrorStr(EUExUtil.getString("plugin_uexgaodemap_wrong_city_name"));
         }else {
-            mDownloadingList.add(downloadVO);
+            if (isDownloading(downloadVO.getName())){
+                updateDownloadStatus(downloadVO.getName(), OfflineMapStatus.LOADING);
+            }else {
+                mDownloadingList.add(downloadVO);
+            }
+
             SharedPreferencesUtils.saveLocalDownloadingList(mContext, mDownloadingList);
             data.setErrorCode(JsConst.SUCCESS);
             if (!isDownloading){
@@ -112,6 +120,20 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         if (mListener != null){
             mListener.cbDownload(data);
         }
+    }
+
+    private boolean isDownloadingError(String name) {
+        boolean result = false;
+        if (mDownloadingList != null){
+            for (int i = 0; i < mDownloadingList.size(); i++){
+                if (name.equals(mDownloadingList.get(i).getName())){
+                    if (mDownloadingList.get(i).getStatus() == OfflineMapStatus.ERROR){
+                        result = true;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     private boolean isValidCityName(String name) {
@@ -410,6 +432,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
 //                        isExist = true;
 //                    }
 //                }
+                getAvailableList();
                 for (int j = 0; j < mAvailableList.size(); j++){
                     final DownloadItemVO item = mAvailableList.get(j);
                     if (name.equals(item.getName())){
