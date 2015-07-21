@@ -24,7 +24,8 @@
 其中的KEY值即是即将要用到的APIKey。
 
 ## 打包集成高德地图插件使用
-### 自定义插件包
+### 配置插件
+####　方法1：自定义插件包
 下载官方最新版高德地图插件包，解压，修改AndroidManifest.xml,把申请的APIKey写入该文件。
 ```
 <meta-data
@@ -32,6 +33,14 @@
     android:value="申请的APIKey"/>
 ```
 修改完成后压缩，作为自定义插件上传到打包服务器。
+
+#### 方法2：config.xml中配置(需配合最新引擎和打包服务器使用，暂时不生效)
+在代码中的config.xml中做如下配置：
+```
+<config desc="uexGaodeMap" type="KEY">
+    <param platform="Android" name="$uexGaodeMap_AppKey$" value="申请的APIKey"/>
+</config>
+```
 ### 在线打包(以大众版在线打包为例)
 #### 插件选择
  ![](http://i.imgur.com/AaoE5hM.png)
