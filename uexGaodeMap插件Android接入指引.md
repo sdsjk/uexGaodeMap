@@ -38,7 +38,7 @@
 在代码中的config.xml中做如下配置：
 ```
 <config desc="uexGaodeMap" type="KEY">
-    <param platform="Android" name="$uexGaodeMap_AppKey$" value="申请的APIKey"/>
+    <param platform="Android" name="$uexGaodeMap_APIKey$" value="申请的APIKey"/>
 </config>
 ```
 ### 在线打包(以大众版在线打包为例)
