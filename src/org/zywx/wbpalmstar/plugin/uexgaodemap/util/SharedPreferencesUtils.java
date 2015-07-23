@@ -2,12 +2,14 @@ package org.zywx.wbpalmstar.plugin.uexgaodemap.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.google.gson.reflect.TypeToken;
 
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadItemVO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SharedPreferencesUtils {
@@ -19,9 +21,12 @@ public class SharedPreferencesUtils {
     public static List<DownloadItemVO> getLocalDownloadingList(Context context) {
         SharedPreferences sp = context.getSharedPreferences(
                 TAG_DATA, Context.MODE_PRIVATE);
-        String downloadData = sp.getString(TAG_DOWNLOADING_LIST,"");
-        List<DownloadItemVO> list = DataHelper.gson.fromJson(downloadData,
-                new TypeToken<List<DownloadItemVO>>(){}.getType());
+        String downloadData = sp.getString(TAG_DOWNLOADING_LIST, "");
+        List<DownloadItemVO> list = new ArrayList<DownloadItemVO>();
+        if (!TextUtils.isEmpty(downloadData)){
+            list = DataHelper.gson.fromJson(downloadData,
+                    new TypeToken<List<DownloadItemVO>>(){}.getType());
+        }
         return list;
     }
 
