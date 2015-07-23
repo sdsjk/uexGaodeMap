@@ -6,7 +6,7 @@
 	<application>
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="$uexGaodeMap_AppKey$"/>
+            android:value="$uexGaodeMap_APIKey$"/>
         <activity
             android:name="org.zywx.wbpalmstar.plugin.uexgaodemap.AMapBasicActivity"
             android:configChanges="orientation|keyboardHidden"
