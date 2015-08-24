@@ -50,6 +50,9 @@ import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableCityVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableProvinceVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonDisplayResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadItemVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadStatusVO;
@@ -146,6 +149,10 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private static final int MSG_DELETE = 65;
     private static final int MSG_RESTART = 66;
     private static final int MSG_STOP_DOWNLOAD = 67;
+    private static final int MSG_SET_CUSTOM_BUTTON = 68;
+    private static final int MSG_REMOVE_CUSTOM_BUTTON = 69;
+    private static final int MSG_SHOW_CUSTOM_BUTTONS = 70;
+    private static final int MSG_HIDE_CUSTOM_BUTTONS = 71;
 
 
     private static LocalActivityManager mgr;
@@ -2101,6 +2108,104 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         GaodeMapOfflineManager.getInstance(mContext, this).getDownloadingList();
     }
 
+    public void setCustomButton(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_SET_CUSTOM_BUTTON;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void setCustomButtonMsg(String[] params) {
+        String json = params[0];
+        CustomButtonVO dataVo = DataHelper.gson.fromJson(json,
+                CustomButtonVO.class);
+        if (!TextUtils.isEmpty(dataVo.getBgImage())){
+            String path = dataVo.getBgImage();
+            String desPath = BUtility.makeRealPath(
+                    BUtility.makeUrl(mBrwView.getCurrentUrl(), path),
+                    mBrwView.getCurrentWidget().m_widgetPath,
+                    mBrwView.getCurrentWidget().m_wgtType);
+            dataVo.setBgImage(desPath);
+        }
+        if (dataVo != null && getAMapActivity() != null){
+            getAMapActivity().setCustomButton(dataVo);
+        }
+    }
+
+    public void deleteCustomButton(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_REMOVE_CUSTOM_BUTTON;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void deleteCustomButtonMsg(String[] params) {
+        String id = params[0];
+        if (!TextUtils.isEmpty(id) && getAMapActivity() != null){
+            getAMapActivity().deleteCustomButton(id);
+        }
+    }
+
+    public void showCustomButtons(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_SHOW_CUSTOM_BUTTONS;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void showCustomButtonsMsg(String[] params) {
+        String json = params[0];
+        List<String> ids = DataHelper.gson.fromJson(json,
+                new TypeToken<List<String>>(){}.getType());
+        if (ids != null && ids.size() > 0 &&
+                getAMapActivity() != null){
+            getAMapActivity().showCustomButtons(ids, this);
+        }
+    }
+
+    public void hideCustomButtons(String[] params) {
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_HIDE_CUSTOM_BUTTONS;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+    private void hideCustomButtonsMsg(String[] params) {
+        List<String> ids = null;
+        if (params.length > 0){
+            String json = params[0];
+            ids = DataHelper.gson.fromJson(json,
+                    new TypeToken<List<String>>(){}.getType());
+        }
+        if (getAMapActivity() != null){
+            getAMapActivity().hideCustomButtons(ids);
+        }
+    }
+
     @Override
     public void onHandleMessage(Message message) {
         if(message == null){
@@ -2310,6 +2415,18 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             case MSG_GET_DOWNLOADING_LIST:
                 getDownloadingListMsg();
                 break;
+            case MSG_SET_CUSTOM_BUTTON:
+                setCustomButtonMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_REMOVE_CUSTOM_BUTTON:
+                deleteCustomButtonMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_SHOW_CUSTOM_BUTTONS:
+                showCustomButtonsMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_HIDE_CUSTOM_BUTTONS:
+                hideCustomButtonsMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
             default:
                 super.onHandleMessage(message);
         }
@@ -2320,6 +2437,13 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 + methodName + "('" + jsonData + "');}";
         Log.i(TAG, "callBackPluginJs->js = " + js);
         onCallback(js);
+    }
+
+    private void callBackPluginJs(EUExGaodeMap brw, String methodName, String jsonData){
+        String js = SCRIPT_HEADER + "if(" + methodName + "){"
+                + methodName + "('" + jsonData + "');}";
+        Log.i(TAG, "callBackPluginJs->js = " + js);
+        brw.onCallback(js);
     }
 
     private void addView2CurrentWindow(View child,
@@ -2543,6 +2667,35 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     public void cbIsUpdate(UpdateResultVO data) {
         String jsonResult = DataHelper.gson.toJson(data);
         callBackPluginJs(JsConst.CALLBACK_IS_UPDATE, jsonResult);
+    }
+
+    @Override
+    public void cbSetCustomButton(CustomButtonResultVO data) {
+        String json = DataHelper.gson.toJson(data);
+        callBackPluginJs(JsConst.CALLBACK_SET_CUSTOM_BUTTON, json);
+    }
+
+    @Override
+    public void cbRemoveCustomButton(CustomButtonResultVO data) {
+        String json = DataHelper.gson.toJson(data);
+        callBackPluginJs(JsConst.CALLBACK_REMOVE_CUSTOM_BUTTON, json);
+    }
+
+    @Override
+    public void cbShowCustomButtons(CustomButtonDisplayResultVO data) {
+        String json = DataHelper.gson.toJson(data);
+        callBackPluginJs(JsConst.CALLBACK_SHOW_CUSTOM_BUTTONS, json);
+    }
+
+    @Override
+    public void cbHideCustomButtons(CustomButtonDisplayResultVO data) {
+        String json = DataHelper.gson.toJson(data);
+        callBackPluginJs(JsConst.CALLBACK_HIDE_CUSTOM_BUTTONS, json);
+    }
+
+    @Override
+    public void onButtonClick(String id, EUExGaodeMap gaodeMap) {
+        callBackPluginJs(gaodeMap, JsConst.ON_BUTTON_CLICK, id);
     }
 
     private AMapBasicActivity getAMapActivity() {

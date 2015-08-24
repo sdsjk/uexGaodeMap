@@ -114,4 +114,9 @@ public class JsConst {
     public static final int MSG_DOWNLOAD_SUCCESS = 2;
     public static final int MSG_DOWNLOAD_ERROR = 3;
     public static final String CUSTOM_BUBBLE = "customBubble";
+    public static final String CALLBACK_SET_CUSTOM_BUTTON = "uexGaodeMap.cbSetCustomButton";
+    public static final String CALLBACK_REMOVE_CUSTOM_BUTTON = "uexGaodeMap.cbDeleteCustomButton";
+    public static final String CALLBACK_SHOW_CUSTOM_BUTTONS = "uexGaodeMap.cbShowCustomButtons";
+    public static final String CALLBACK_HIDE_CUSTOM_BUTTONS = "uexGaodeMap.cbHideCustomButtons";
+    public static final String ON_BUTTON_CLICK = "uexGaodeMap.onCustomButtonClick";
 }

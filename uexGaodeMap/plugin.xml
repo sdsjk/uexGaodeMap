@@ -55,5 +55,10 @@
         <method name="getDownloadingList"/>
         <method name="isUpdate"/>
         <method name="delete"/>
+
+        <method name="setCustomButton"/>
+        <method name="deleteCustomButton"/>
+        <method name="showCustomButtons"/>
+        <method name="hideCustomButtons"/>
     </plugin>
 </uexplugins>

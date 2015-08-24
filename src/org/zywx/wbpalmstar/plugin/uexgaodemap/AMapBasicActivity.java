@@ -2,9 +2,16 @@ package org.zywx.wbpalmstar.plugin.uexgaodemap;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
@@ -31,13 +38,18 @@ import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.amap.api.services.poisearch.PoiSearch.Query;
 
+import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonDisplayResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleBoundsVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.ArcBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.BoundBaseBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBoundBean;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CustomButtonBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.GroundBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBean;
@@ -45,9 +57,12 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBoundBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolylineBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.RectangleBoundBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.SearchBean;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
@@ -66,6 +81,8 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
     private GeocodeSearch geocodeSearch;
     private boolean isShowOverlay = false;
     private List<LatLng> mOverlays;
+    private FrameLayout mContent;
+    private HashMap<String, CustomButtonBean> mButtons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +94,12 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
          * 则需要在离线地图下载和使用地图页面都进行路径设置
          * */
         //Demo中为了其他界面可以使用下载的离线地图，使用默认位置存储，屏蔽了自定义设置
-      //  MapsInitializer.sdcardDir =OffLineMapUtils.getSdCacheDir(this);
+        //  MapsInitializer.sdcardDir =OffLineMapUtils.getSdCacheDir(this);
         Intent intent = getIntent();
         mListener = (OnCallBackListener) intent.getSerializableExtra("callback");
 
+        mContent = (FrameLayout) findViewById(EUExUtil.getResIdID("plugin_uexgaodemap_bg_content"));
+        mButtons = new HashMap<String, CustomButtonBean>();
         mapView = (MapView) findViewById(EUExUtil.getResIdID("plugin_uexgaodemap_basic_map"));
         mapView.onCreate(savedInstanceState);// 此方法必须重写
         init();
@@ -400,6 +419,157 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
             markerMgr.clearAll();
             overlayMgr.clearAll();
         }
+    }
+
+    public void setCustomButton(final CustomButtonVO dataVO) {
+        CustomButtonResultVO resultVO = new CustomButtonResultVO();
+        resultVO.setId(dataVO.getId());
+        if (!isAlreadyAdded(dataVO.getId())){
+            FrameLayout.LayoutParams lpParams = new FrameLayout.LayoutParams(
+                    dataVO.getWidth(),dataVO.getHeight());
+            lpParams.leftMargin = dataVO.getX();
+            lpParams.topMargin = dataVO.getY();
+            Button btn = new Button(this);
+            btn.setLayoutParams(lpParams);
+            btn.setPadding(0,0,0,0);
+            if (!TextUtils.isEmpty(dataVO.getTitle())){
+                btn.setText(dataVO.getTitle());
+            }
+            if (dataVO.getTextSize() > 0){
+                btn.setTextSize(dataVO.getTextSize());
+            }
+            if (!TextUtils.isEmpty(dataVO.getTitleColor())){
+                btn.setTextColor(BUtility.parseColor(dataVO.getTitleColor()));
+            }
+            if (!TextUtils.isEmpty(dataVO.getBgImage())){
+                Drawable bg = new BitmapDrawable(GaodeUtils.getImage(this, dataVO.getBgImage()));
+                int version = Build.VERSION.SDK_INT;
+                if (version < 16){
+                    btn.setBackgroundDrawable(bg);
+                }else{
+                    btn.setBackground(bg);
+                }
+            }
+            mContent.addView(btn);
+            btn.setVisibility(View.GONE);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null){
+                        EUExGaodeMap gaodeMap = mButtons.get(
+                                dataVO.getId()).getGaodeMap();
+                        mListener.onButtonClick(dataVO.getId(), gaodeMap);
+                    }
+                }
+            });
+            CustomButtonBean button = new CustomButtonBean();
+            button.setButton(btn);
+            mButtons.put(dataVO.getId(), button);
+            resultVO.setIsSuccess(true);
+        }else{
+            resultVO.setIsSuccess(false);
+        }
+        if (mListener != null){
+            mListener.cbSetCustomButton(resultVO);
+        }
+    }
+
+    private boolean isAlreadyAdded(String id){
+        if (mButtons != null && mButtons.size() >0 && !TextUtils.isEmpty(id)){
+            Iterator<String> it = mButtons.keySet().iterator();
+            while (it.hasNext()){
+                String itemId = it.next();
+                if (itemId.equals(id)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void deleteCustomButton(String id) {
+        CustomButtonResultVO resultVO = new CustomButtonResultVO();
+        resultVO.setId(id);
+        resultVO.setIsSuccess(false);
+        if (mButtons != null && mButtons.size() >0 && !TextUtils.isEmpty(id)){
+            Iterator<String> it = mButtons.keySet().iterator();
+            while (it.hasNext()){
+                final String itemId = it.next();
+                if (itemId.equals(id)){
+                    Button btn = mButtons.get(itemId).getButton();
+                    mContent.removeView(btn);
+                    it.remove();
+                    resultVO.setIsSuccess(true);
+                }
+            }
+        }
+        if (mListener != null){
+            mListener.cbRemoveCustomButton(resultVO);
+        }
+    }
+
+    public void showCustomButtons(List<String> ids, EUExGaodeMap gaodeMap) {
+        CustomButtonDisplayResultVO resultVO = new CustomButtonDisplayResultVO();
+        List<String> successIds = new ArrayList<String>();
+        List<String> failedIds = new ArrayList<String>();
+        for (int i = 0; i < ids.size(); i++){
+            final String id = ids.get(i);
+            if (isAlreadyAdded(id)){
+                Button btn = mButtons.get(id).getButton();
+                mButtons.get(id).setGaodeMap(gaodeMap);
+                if (btn != null && btn.getVisibility() == View.GONE){
+                    btn.setVisibility(View.VISIBLE);
+                    successIds.add(id);
+                }else {
+                    failedIds.add(id);
+                }
+            }else{
+                failedIds.add(id);
+            }
+        }
+        if (mListener != null){
+            resultVO.setFailedIds(failedIds);
+            resultVO.setSuccessfulIds(successIds);
+            mListener.cbShowCustomButtons(resultVO);
+        }
+    }
+
+    public void hideCustomButtons(List<String> ids) {
+        CustomButtonDisplayResultVO resultVO = new CustomButtonDisplayResultVO();
+        List<String> successIds = new ArrayList<String>();
+        List<String> failedIds = new ArrayList<String>();
+        if (ids == null){
+            ids = getAllButtons();
+        }
+        for (int i = 0; i < ids.size(); i++){
+            final String id = ids.get(i);
+            if (isAlreadyAdded(id)){
+                Button btn = mButtons.get(id).getButton();
+                if (btn != null && btn.getVisibility() == View.VISIBLE){
+                    btn.setVisibility(View.GONE);
+                    successIds.add(id);
+                }else {
+                    failedIds.add(id);
+                }
+            }else{
+                failedIds.add(id);
+            }
+        }
+        if (mListener != null){
+            resultVO.setFailedIds(failedIds);
+            resultVO.setSuccessfulIds(successIds);
+            mListener.cbHideCustomButtons(resultVO);
+        }
+    }
+
+    private List<String> getAllButtons() {
+        List<String> list = new ArrayList<String>();
+        Iterator<String> it = mButtons.keySet().iterator();
+        while (it.hasNext()){
+            final String itemId = it.next();
+            list.add(itemId);
+        }
+        return list;
     }
 
     private class GaodeLocationListener implements AMapLocationListener{

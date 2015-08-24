@@ -7,8 +7,11 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
 
+import org.zywx.wbpalmstar.plugin.uexgaodemap.EUExGaodeMap;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableCityVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableProvinceVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonDisplayResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadItemVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadStatusVO;
@@ -40,4 +43,13 @@ public interface OnCallBackListener extends Serializable{
     public void cbGetAvailableProvinceList(List<AvailableProvinceVO> data);
 
     public void cbIsUpdate(UpdateResultVO data);
+
+    public void cbSetCustomButton(CustomButtonResultVO data);
+    public void cbRemoveCustomButton(CustomButtonResultVO data);
+
+    public void cbShowCustomButtons(CustomButtonDisplayResultVO data);
+    public void cbHideCustomButtons(CustomButtonDisplayResultVO data);
+
+    public void onButtonClick(String id, EUExGaodeMap gaodeMap);
+
 }

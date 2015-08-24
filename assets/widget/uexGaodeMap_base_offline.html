@@ -151,20 +151,21 @@
     function onDownload(info){
         var data = JSON.parse(info);
         if(data.status == 0){
-            uexWindow.toast(1,5,data.name + " 正在下载...",0);
+            //uexWindow.toast(1,5,data.name + " 正在下载...",0);
+            document.getElementById('result').innerHTML=data.name + " 正在下载..."+data.completeCode+"%";
         }
         if(data.status == 1){
-            uexWindow.toast(1,5,data.name + " 正在解压...",0);
+           document.getElementById('result').innerHTML=data.name + " 正在解压...";
         }
         if(data.status == 4){
-            uexWindow.closeToast();
+            document.getElementById('result').innerHTML="***";
             alert(data.name + " 离线地图下载成功！");
         }
         if(data.status == 3){
-            uexWindow.toast(0,5,data.name + " 暂停下载...",2000);
+           document.getElementById('result').innerHTML=data.name + " 暂停下载...";
         }
         if(data.status == -1){
-            uexWindow.closeToast();
+            document.getElementById('result').innerHTML="***"
             alert(data.name + " 下载失败！");
         }
     }
@@ -192,6 +193,9 @@
                 <input class='btn' type='button' value='getAvailableProvinceList' onclick='getAvailableProvinceList()'>
                 <input class='btn' type='button' value='getDownloadList' onclick='getDownloadList()'>
                 <input class='btn' type='button' value='getDownloadingList' onclick='getDownloadingList()'>
+                    
+                    
+                    <br><div>info:</div><div id="result">***</div>
                 <table>
                     <tr>
                         <td style="padding:10px">北京</td>
