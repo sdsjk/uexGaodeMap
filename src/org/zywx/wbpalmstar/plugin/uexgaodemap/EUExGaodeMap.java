@@ -2534,6 +2534,8 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 if (address != null && address.getLatLonPoint() != null){
                     jsonResult.put(JsConst.LONGITUDE, address.getLatLonPoint().getLongitude());
                     jsonResult.put(JsConst.LATITUDE, address.getLatLonPoint().getLatitude());
+                    jsonResult.put(JsConst.ADDRESS, address.getFormatAddress());
+                    jsonResult.put(JsConst.CITY, address.getCity());
                 }
             }
         } catch (JSONException e) {
@@ -2549,6 +2551,8 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             jsonResult.put(JsConst.ERRORCODE, errorCode);
             if (result != null && result.getRegeocodeAddress() != null){
                 jsonResult.put(JsConst.ADDRESS, result.getRegeocodeAddress().getFormatAddress());
+                jsonResult.put(JsConst.LATITUDE, result.getRegeocodeQuery().getPoint().getLatitude());
+                jsonResult.put(JsConst.LONGITUDE, result.getRegeocodeQuery().getPoint().getLongitude());
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexGaodeMap" version="3.0.4" build="4">
-        <info>4:新增自定义按钮相关接口</info>
+        uexName="uexGaodeMap" version="3.0.5" build="5">
+        <info>5:地理编码和反地理编码回调接口增加参数</info>
+        <bulid>4:新增自定义按钮相关接口</bulid>
         <bulid>3:新增离线地图相关方法，优化添加标注接口使其支持自定义气泡</bulid>
         <bulid>2:新增显示地图比例尺方法，新增批量删除标注或覆盖物的方法</bulid>
         <bulid>1:插件包添加dex文件夹</bulid>
