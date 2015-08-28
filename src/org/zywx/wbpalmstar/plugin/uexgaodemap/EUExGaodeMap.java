@@ -208,10 +208,14 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         intent.setClass(mContext, AMapBasicActivity.class);
         try {
             JSONObject jsonObject = new JSONObject(json);
-            left = Integer.valueOf(jsonObject.getString(JsConst.LEFT));
-            top = Integer.valueOf(jsonObject.getString(JsConst.TOP));
-            width = Integer.valueOf(jsonObject.getString(JsConst.WIDTH));
-            height = Integer.valueOf(jsonObject.getString(JsConst.HEIGHT));
+            double l = Double.valueOf(jsonObject.getString(JsConst.LEFT));
+            left = (int) l;
+            double t = Double.valueOf(jsonObject.getString(JsConst.TOP));
+            top = (int) t;
+            double w = Double.valueOf(jsonObject.getString(JsConst.WIDTH));
+            width = (int) w;
+            double h = Double.valueOf(jsonObject.getString(JsConst.HEIGHT));
+            height = (int) h;
             if (jsonObject.has(JsConst.LONGITUDE)
                     && jsonObject.has(JsConst.LATITUDE)){
                 double longitude = Double.valueOf(jsonObject.getString(JsConst.LONGITUDE));
