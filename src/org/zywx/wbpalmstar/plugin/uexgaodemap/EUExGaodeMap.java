@@ -156,6 +156,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
 
 
     private static LocalActivityManager mgr;
+    private boolean isScrollWithWeb = false;
 
     public EUExGaodeMap(Context context, EBrowserView eBrowserView) {
         super(context, eBrowserView);
@@ -225,6 +226,9 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 latlng[1] = latitude;
                 intent.putExtra(JsConst.LATLNG, latlng);
             }
+            if (jsonObject.has(JsConst.IS_SCROLL_WITH_WEB)){
+                isScrollWithWeb = Boolean.valueOf(jsonObject.getString(JsConst.IS_SCROLL_WITH_WEB));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
             left = 0;
@@ -235,10 +239,20 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         intent.putExtra("callback", EUExGaodeMap.this);
         Window window = mgr.startActivity(getActivityTag(), intent);
         View decorView = window.getDecorView();
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
-        lp.leftMargin = left;
-        lp.topMargin = top;
-        addView2CurrentWindow(decorView, lp);
+        if (isScrollWithWeb){
+            android.widget.AbsoluteLayout.LayoutParams lp = new
+                    android.widget.AbsoluteLayout.LayoutParams(
+                    width,
+                    height,
+                    left,
+                    top);
+            addViewToWebView(decorView, lp, TAG);
+        }else{
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
+            lp.leftMargin = left;
+            lp.topMargin = top;
+            addView2CurrentWindow(decorView, lp);
+        }
     }
 
     public void close(String[] params) {
@@ -2711,9 +2725,13 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
     private void removeAMapView(AMapBasicActivity activity){
-        View view = activity.getWindow().getDecorView();
-        if (view.getParent() != null) {
-            ((ViewGroup)view.getParent()).removeView(view);
+        if (isScrollWithWeb){
+            removeViewFromWebView(TAG);
+        }else{
+            View view = activity.getWindow().getDecorView();
+            if (view.getParent() != null) {
+                ((ViewGroup)view.getParent()).removeView(view);
+            }
         }
     }
 

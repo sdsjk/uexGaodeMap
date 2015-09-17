@@ -104,12 +104,16 @@
                     top:divTop,
                     width:w,
                     height:h,
+                    isScrollWithWeb:true,
                     longitude:114.402815,
                     latitude:30.475798
                 };
                 var data = JSON.stringify(params);
                 uexGaodeMap.open(data);
             }
+        function openPop(){
+            uexWindow.openPopover("pp",0,"index.html","",0,0,"","","",0);
+        }
     </script>
 </head>
 <body class="um-vp " ontouchstart>
@@ -137,8 +141,9 @@
         <input type="button" value="关闭实时交通图" onclick="closeTrafficEnabled();">
             <input type="button" value="设置中心点" onclick="setCenter();">
         <input type="button" value="关闭" onclick="closeMap();">
-        <p></p><br> 
-                
+            <!--<input type="button" value="pop" onclick="openPop();">-->
+        <p></p><br>
+
         </div>
       </div>
     </div>

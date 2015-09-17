@@ -36,6 +36,7 @@ public class JsConst {
     public static final String BUBBLE = "bubble";
     public static final String BGIMG = "bgImg";
 
+    public static final String IS_SCROLL_WITH_WEB = "isScrollWithWeb";
 
     public static final String FILLCOLOR = "fillColor";
     public static final String LINEWIDTH = "lineWidth";
