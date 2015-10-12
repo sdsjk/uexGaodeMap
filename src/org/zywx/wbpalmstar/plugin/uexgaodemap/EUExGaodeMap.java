@@ -1,9 +1,11 @@
 package org.zywx.wbpalmstar.plugin.uexgaodemap;
 
+import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -167,6 +169,10 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     protected boolean clean() {
         return false;
+    }
+
+    public static void onActivityCreate(Context context){
+        ((Activity)context).getWindow().setFormat(PixelFormat.TRANSLUCENT);
     }
 
 
