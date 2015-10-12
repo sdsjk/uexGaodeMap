@@ -2,6 +2,8 @@ package org.zywx.wbpalmstar.plugin.uexgaodemap;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -88,6 +90,7 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(EUExUtil.getResLayoutID("plugin_uexgaodemap_basic_layout"));
+
         /*
          * 设置离线地图存储目录，在下载离线地图或初始化地图设置;
          * 使用过程中可自行设置, 若自行设置了离线地图存储的路径，
@@ -195,6 +198,11 @@ public class AMapBasicActivity extends Activity implements OnMapLoadedListener,
         super.onDestroy();
         mapView.onDestroy();
     }
+
+    public void readyToDestroy(){
+        findViewById(EUExUtil.getResIdID("overlay_view")).setVisibility(View.VISIBLE);
+    }
+
 
     @Override
     public void onMapLoaded() {

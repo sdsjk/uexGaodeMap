@@ -275,9 +275,15 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         if (getAMapActivity() == null){
             return;
         }
-        removeAMapView(getAMapActivity());
-        mgr.destroyActivity(getActivityTag(), true);
-    }
+        getAMapActivity().readyToDestroy();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                removeAMapView(getAMapActivity());
+                mgr.destroyActivity(getActivityTag(), true);
+            }
+        },30);
+     }
 
     public void hideMap(String[] params) {
         if (params == null || params.length < 1) {
