@@ -140,7 +140,13 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
     }
 
     public void addCircle(CircleBean bean) {
-        if (bean == null || mOverlays.containsKey(bean.getId())) return;
+        if (bean == null) {
+            return;
+        }
+        if (mOverlays.containsKey(bean.getId())){
+            remove(bean.getId());
+            mOverlays.remove(bean.getId());
+        }
         CircleOverlay circleOverlay = new CircleOverlay();
         CircleOptions option = bean.getData();
         if (option != null){
