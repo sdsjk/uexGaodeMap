@@ -1,10 +1,7 @@
 package org.zywx.wbpalmstar.plugin.uexgaodemap;
 
 import android.app.Activity;
-import android.app.ActivityGroup;
-import android.app.LocalActivityManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
@@ -12,8 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -157,12 +152,12 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private static final int MSG_HIDE_CUSTOM_BUTTONS = 71;
 
 
-    private static LocalActivityManager mgr;
     private boolean isScrollWithWeb = false;
+
+    private AMapBasicFragment basicFragment;
 
     public EUExGaodeMap(Context context, EBrowserView eBrowserView) {
         super(context, eBrowserView);
-        mgr = ((ActivityGroup) mContext).getLocalActivityManager();
         MapsInitializer.sdcardDir = GaodeUtils.getCacheDir();
     }
 
@@ -211,8 +206,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         int top = 0;
         int width = -1;
         int height = -1;
-        Intent intent = new Intent();
-        intent.setClass(mContext, AMapBasicActivity.class);
+        double[] latlng = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
             double l = Double.valueOf(jsonObject.getString(JsConst.LEFT));
@@ -227,10 +221,9 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                     && jsonObject.has(JsConst.LATITUDE)){
                 double longitude = Double.valueOf(jsonObject.getString(JsConst.LONGITUDE));
                 double latitude = Double.valueOf(jsonObject.getString(JsConst.LATITUDE));
-                double[] latlng = new double[2];
+                latlng = new double[2];
                 latlng[0] = longitude;
                 latlng[1] = latitude;
-                intent.putExtra(JsConst.LATLNG, latlng);
             }
             if (jsonObject.has(JsConst.IS_SCROLL_WITH_WEB)){
                 isScrollWithWeb = Boolean.valueOf(jsonObject.getString(JsConst.IS_SCROLL_WITH_WEB));
@@ -242,9 +235,11 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             width = -1;
             height = -1;
         }
-        intent.putExtra("callback", EUExGaodeMap.this);
-        Window window = mgr.startActivity(getActivityTag(), intent);
-        View decorView = window.getDecorView();
+        if (getAMapActivity() != null){
+
+        }
+        basicFragment = new AMapBasicFragment(EUExGaodeMap.this,latlng);
+
         if (isScrollWithWeb){
             android.widget.AbsoluteLayout.LayoutParams lp = new
                     android.widget.AbsoluteLayout.LayoutParams(
@@ -252,12 +247,12 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                     height,
                     left,
                     top);
-            addViewToWebView(decorView, lp, TAG);
+            addFragmentToWebView(basicFragment, lp, TAG);
         }else{
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
             lp.leftMargin = left;
             lp.topMargin = top;
-            addView2CurrentWindow(decorView, lp);
+            addFragmentToCurrentWindow(basicFragment, lp, TAG);
         }
     }
 
@@ -280,7 +275,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             @Override
             public void run() {
                 removeAMapView(getAMapActivity());
-                mgr.destroyActivity(getActivityTag(), true);
             }
         },30);
      }
@@ -357,7 +351,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        AMapBasicActivity activity = getAMapActivity();
+        AMapBasicFragment activity = getAMapActivity();
         activity.setMapType(mapType);
     }
 
@@ -418,7 +412,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        AMapBasicActivity activity = getAMapActivity();
+        AMapBasicFragment activity = getAMapActivity();
         activity.setCenter(longitude, latitude);
     }
 
@@ -448,7 +442,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        AMapBasicActivity activity = getAMapActivity();
+        AMapBasicFragment activity = getAMapActivity();
         activity.setZoomLevel(level);
     }
 
@@ -466,7 +460,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         if (getAMapActivity() == null){
             return;
         }
-        AMapBasicActivity activity = getAMapActivity();
+        AMapBasicFragment activity = getAMapActivity();
         activity.zoomIn();
     }
 
@@ -484,7 +478,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         if (getAMapActivity() == null){
             return;
         }
-        AMapBasicActivity activity = getAMapActivity();
+        AMapBasicFragment activity = getAMapActivity();
         activity.zoomOut();
     }
 
@@ -2732,22 +2726,19 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         callBackPluginJs(gaodeMap, JsConst.ON_BUTTON_CLICK, id);
     }
 
-    private AMapBasicActivity getAMapActivity() {
-        return (AMapBasicActivity) mgr.getActivity(getActivityTag());
+    private AMapBasicFragment getAMapActivity() {
+        return basicFragment;
     }
 
-    private void removeAMapView(AMapBasicActivity activity){
+    private void removeAMapView(AMapBasicFragment activity){
         if (isScrollWithWeb){
-            removeViewFromWebView(TAG);
+            removeFragmentFromWebView(TAG);
         }else{
-            View view = activity.getWindow().getDecorView();
-            if (view.getParent() != null) {
-                ((ViewGroup)view.getParent()).removeView(view);
-            }
+            removeFragmentFromWindow(activity);
         }
     }
 
     private String getActivityTag(){
-        return AMapBasicActivity.TAG;
+        return AMapBasicFragment.TAG;
     }
 }

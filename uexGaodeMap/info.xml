@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexGaodeMap" version="3.0.9" build="9">
-        <info>9:添加相同id的圆形覆盖物时，改为替换原来的</info>
+        uexName="uexGaodeMap" version="3.0.10" build="10">
+        <info>10:去掉插件中的ActivityGroup,配合引擎升级</info>
+        <build>9:添加相同id的圆形覆盖物时，改为替换原来的</build>
         <build>8:解决关闭地图黑屏的问题</build>
         <build>7:解决打开地图黑屏的问题</build>
         <build>6:open接口增加地图是否随网页滚动接口</build>

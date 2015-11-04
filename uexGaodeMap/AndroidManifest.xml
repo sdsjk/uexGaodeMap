@@ -7,10 +7,5 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="$uexGaodeMap_APIKey$"/>
-        <activity
-            android:name="org.zywx.wbpalmstar.plugin.uexgaodemap.AMapBasicActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar"></activity>
 	</application>
 </manifest>
