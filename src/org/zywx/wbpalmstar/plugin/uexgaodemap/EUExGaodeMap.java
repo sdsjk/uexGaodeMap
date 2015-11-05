@@ -235,9 +235,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             width = -1;
             height = -1;
         }
-        if (getAMapActivity() != null){
-
-        }
         basicFragment = new AMapBasicFragment(EUExGaodeMap.this,latlng);
 
         if (isScrollWithWeb){
