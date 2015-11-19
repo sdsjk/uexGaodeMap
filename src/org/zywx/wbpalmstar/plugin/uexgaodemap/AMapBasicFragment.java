@@ -211,7 +211,9 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
     }
 
     public void readyToDestroy(){
-        overlayView.setVisibility(View.VISIBLE);
+        if (overlayView!=null) {
+            overlayView.setVisibility(View.VISIBLE);
+        }
     }
 
 
