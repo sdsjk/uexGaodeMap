@@ -717,6 +717,9 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
     }
 
     public void geocode(GeocodeQuery query){
+        if (this.getActivity()==null){
+            return;
+        }
         if (aMap != null){
             if (geocodeSearch == null){
                 geocodeSearch = new GeocodeSearch(this.getActivity());
@@ -727,6 +730,9 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
     }
 
     public void reGeocode(RegeocodeQuery query){
+        if (this.getActivity()==null){
+            return;
+        }
         if (aMap != null){
             if (geocodeSearch == null){
                 geocodeSearch = new GeocodeSearch(this.getActivity());
