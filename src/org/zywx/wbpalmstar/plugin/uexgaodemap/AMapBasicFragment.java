@@ -345,22 +345,37 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
     }
 
     public void addMarkersOverlay(List<MarkerBean> list){
+        if (markerMgr==null){
+            return;
+        }
         markerMgr.addMarkers(list);
     }
 
     public void updateMarkersOverlay(MarkerBean bean){
+        if (markerMgr==null){
+            return;
+        }
         markerMgr.updateMarker(bean);
     }
 
     public void removeMarkersOverlay(String id){
+        if (markerMgr==null){
+            return;
+        }
         markerMgr.removeMarker(id);
     }
 
     public void showBubble(String id){
+        if (markerMgr==null){
+            return;
+        }
         markerMgr.showBubble(id);
     }
 
     public void hideBubble(){
+        if (markerMgr==null){
+            return;
+        }
         markerMgr.hideBubble();
     }
 
