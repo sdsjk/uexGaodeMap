@@ -14,6 +14,7 @@ public class JsConst {
     public static final String ON_S_D_K_RECEIVER_ERROR = "uexGaodeMap.onSDKReceiverError";
     public static final String ON_RECEIVE_LOCATION = "uexGaodeMap.onReceiveLocation";
     public static final String ON_MAP_LOADED_LISTENER = "uexGaodeMap.onMapLoadedListener";
+    public static final String CALLBACK_OPEN = "uexGaodeMap.cbOpen";
 
     public static final String LEFT = "left";
     public static final String TOP = "top";

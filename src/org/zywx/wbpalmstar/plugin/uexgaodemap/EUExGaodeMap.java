@@ -251,6 +251,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             lp.topMargin = top;
             addFragmentToCurrentWindow(basicFragment, lp, TAG);
         }
+        callBackPluginJs(JsConst.CALLBACK_OPEN,"");
     }
 
     public void close(String[] params) {
