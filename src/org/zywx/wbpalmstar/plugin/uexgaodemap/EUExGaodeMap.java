@@ -6,7 +6,6 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -41,6 +40,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
@@ -1117,17 +1117,11 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_POI_SEARCH_IN_CITY;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void poiSearchMsg(String[] params) {
         String json = params[0];
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
         SearchBean bean = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
@@ -1229,11 +1223,13 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (bean != null && getAMapActivity() != null){
-            getAMapActivity().poiSearch(bean);
+            getAMapActivity().poiSearch(bean,callbackId);
         }else{
             errorCallback(0, 0, "error params!");
         }
     }
+
+
 
     public void poiNearbySearch(String[] params) {
         if (params == null || params.length < 1) {
@@ -1476,17 +1472,11 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_GEOCODE;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void geocodeMsg(String[] params) {
         String json = params[0];
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
         GeocodeQuery query = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
@@ -1501,7 +1491,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (query != null && getAMapActivity() != null){
-            getAMapActivity().geocode(query);
+            getAMapActivity().geocode(query,callbackId);
         }
     }
 
@@ -1510,17 +1500,11 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_REVERSE_GEOCODE;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void reverseGeocodeMsg(String[] params) {
         String json = params[0];
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
         RegeocodeQuery query = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
@@ -1544,23 +1528,17 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (query != null && getAMapActivity() != null){
-            getAMapActivity().reGeocode(query);
+            getAMapActivity().reGeocode(query,callbackId);
         }
     }
 
     public void getCurrentLocation(String[] params) {
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_GET_CURRENT_LOCATION;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void getCurrentLocationMsg() {
+        int callbackId=-1;
+        if (params!=null&&params.length>0){
+            callbackId= Integer.parseInt(params[0]);
+        }
         if (getAMapActivity() != null){
-            getAMapActivity().getCurrentLocation();
+            getAMapActivity().getCurrentLocation(callbackId);
         }
     }
 
@@ -1693,30 +1671,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         }
         if (!TextUtils.isEmpty(id) && getAMapActivity() != null){
             getAMapActivity().removeOverlay(id);
-        }
-    }
-
-    public void poiSearchDetail(String[] params) {
-        if (params == null || params.length < 1) {
-            errorCallback(0, 0, "error params!");
-            return;
-        }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_POI_SEARCH_DETAIL;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void poiSearchDetailMsg(String[] params) {
-        String json = params[0];
-        PoiItemVO poiItemVO = DataHelper.gson.fromJson(json,
-                new TypeToken<PoiItemVO>(){}.getType());
-        String id = poiItemVO.getId();
-        if (!TextUtils.isEmpty(id) && getAMapActivity() != null){
-            getAMapActivity().poiSearchDetail(id);
         }
     }
 
@@ -1891,18 +1845,12 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_DOWNLOAD;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void downloadMsg(String[] params) {
         String json = params[0];
-        List<DownloadItemVO> list = new ArrayList<DownloadItemVO>();
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
+        final List<DownloadItemVO> list = new ArrayList<DownloadItemVO>();
         try {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++){
@@ -1931,9 +1879,20 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
             errorCallback(0, 0, "error params!");
         }
+        GaodeMapOfflineManager.getInstance(mContext,this).confirmOfflineMapMgrExist();
         for (int i = 0; i < list.size(); i++){
-            GaodeMapOfflineManager.getInstance(mContext, this).download(list.get(i));
-        }
+            final int finalI = i;
+            final int finalCallbackId = callbackId;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    GaodeMapOfflineManager.getInstance(mContext, EUExGaodeMap.this).
+                            download(list.get(finalI), finalCallbackId, finalI ==
+                            (list.size()
+                            -1));
+                }
+            }).start();
+         }
     }
 
     public void pause(String[] params) {
@@ -1961,17 +1920,11 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
     public void getAvailableCityList(String[] params) {
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_GET_AVAILABLE_CITY_LIST;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void getAvailableCityListMsg() {
-        GaodeMapOfflineManager.getInstance(mContext, this).getAvailableCityList();
+        int callbackId=-1;
+        if (params.length>0){
+            callbackId= Integer.parseInt(params[0]);
+        }
+        GaodeMapOfflineManager.getInstance(mContext, this).getAvailableCityList(callbackId);
     }
 
     public void isUpdate(String[] params) {
@@ -1979,20 +1932,14 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_IS_UPDATE;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void isUpdateMsg(String[] params) {
         String json = params[0];
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
         try {
             JSONObject jsonObject = new JSONObject(json);
-            DownloadItemVO data = new DownloadItemVO();
+            final DownloadItemVO data = new DownloadItemVO();
             String name = null;
             if (jsonObject.has(JsConst.TAG_CITY)){
                 if (!TextUtils.isEmpty(jsonObject.getString(JsConst.TAG_CITY))){
@@ -2009,8 +1956,16 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             if (!TextUtils.isEmpty(name)){
                 data.setName(name);
                 data.setStatus(OfflineMapStatus.CHECKUPDATES);
-                GaodeMapOfflineManager.getInstance(mContext, this).isUpdate(data);
-            }else{
+                GaodeMapOfflineManager.getInstance(mContext,this).confirmOfflineMapMgrExist();
+                final int finalCallbackId = callbackId;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        GaodeMapOfflineManager.getInstance(mContext, EUExGaodeMap.this).
+                                isUpdate(data, finalCallbackId);
+                    }
+                }).start();
+             }else{
                 errorCallback(0, 0, "error params!");
             }
         } catch (JSONException e) {
@@ -2020,23 +1975,17 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
     public void delete(String[] params) {
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_DELETE;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void deleteMsg(String[] params) {
         List<String> list = null;
         if (params != null && params.length > 0){
             String json = params[0];
             list = DataHelper.gson.fromJson(json,
                     new TypeToken<List<String>>(){}.getType());
         }
-        GaodeMapOfflineManager.getInstance(mContext, this).deleteList(list);
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
+        GaodeMapOfflineManager.getInstance(mContext, this).deleteList(list,callbackId);
     }
 
     public void restart(String[] params) {
@@ -2089,62 +2038,34 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
     public void getAvailableProvinceList(String[] params) {
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_GET_AVAILABLE_PROVINCE_LIST;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void getAvailableProvinceListMsg() {
-        GaodeMapOfflineManager.getInstance(mContext, this).getAvailableProvinceList();
+        int callbackId=-1;
+        if (params.length>0){
+            callbackId= Integer.parseInt(params[0]);
+        }
+        GaodeMapOfflineManager.getInstance(mContext, this).getAvailableProvinceList(callbackId);
     }
 
     public void getDownloadList(String[] params) {
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_GET_DOWNLOAD_LIST;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void getDownloadListMsg() {
-        GaodeMapOfflineManager.getInstance(mContext, this).getDownloadList();
+        int callbackId=-1;
+        if (params.length>0){
+            callbackId= Integer.parseInt(params[0]);
+        }
+        GaodeMapOfflineManager.getInstance(mContext, this).getDownloadList(callbackId);
     }
 
     public void getDownloadingList(String[] params) {
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_GET_DOWNLOADING_LIST;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
+        int callbackId=-1;
+        if (params.length>0){
+            callbackId= Integer.parseInt(params[0]);
+        }
+        GaodeMapOfflineManager.getInstance(mContext, this).getDownloadingList(callbackId);
     }
 
-    private void getDownloadingListMsg() {
-        GaodeMapOfflineManager.getInstance(mContext, this).getDownloadingList();
-    }
-
-    public void setCustomButton(String[] params) {
+    public CustomButtonResultVO setCustomButton(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_SET_CUSTOM_BUTTON;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void setCustomButtonMsg(String[] params) {
         String json = params[0];
         CustomButtonVO dataVo = DataHelper.gson.fromJson(json,
                 CustomButtonVO.class);
@@ -2156,67 +2077,40 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                     mBrwView.getCurrentWidget().m_wgtType);
             dataVo.setBgImage(desPath);
         }
-        if (dataVo != null && getAMapActivity() != null){
-            getAMapActivity().setCustomButton(dataVo);
+        if (getAMapActivity() != null){
+            return getAMapActivity().setCustomButton(dataVo);
         }
+        return null;
     }
 
-    public void deleteCustomButton(String[] params) {
+    public CustomButtonResultVO deleteCustomButton(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_REMOVE_CUSTOM_BUTTON;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void deleteCustomButtonMsg(String[] params) {
         String id = params[0];
         if (!TextUtils.isEmpty(id) && getAMapActivity() != null){
-            getAMapActivity().deleteCustomButton(id);
+            return getAMapActivity().deleteCustomButton(id);
         }
+        return null;
     }
 
-    public void showCustomButtons(String[] params) {
+    public CustomButtonDisplayResultVO showCustomButtons(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_SHOW_CUSTOM_BUTTONS;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void showCustomButtonsMsg(String[] params) {
         String json = params[0];
         List<String> ids = DataHelper.gson.fromJson(json,
                 new TypeToken<List<String>>(){}.getType());
         if (ids != null && ids.size() > 0 &&
                 getAMapActivity() != null){
-            getAMapActivity().showCustomButtons(ids, this);
+           return getAMapActivity().showCustomButtons(ids, this);
         }
+        return null;
     }
 
-    public void hideCustomButtons(String[] params) {
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_HIDE_CUSTOM_BUTTONS;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void hideCustomButtonsMsg(String[] params) {
+    public CustomButtonDisplayResultVO hideCustomButtons(String[] params) {
         List<String> ids = null;
         if (params.length > 0){
             String json = params[0];
@@ -2224,8 +2118,9 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                     new TypeToken<List<String>>(){}.getType());
         }
         if (getAMapActivity() != null){
-            getAMapActivity().hideCustomButtons(ids);
+            return getAMapActivity().hideCustomButtons(ids);
         }
+        return null;
     }
 
     @Override
@@ -2323,9 +2218,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             case MSG_REMOVE_MAKERS_OVERLAY:
                 removeMarkersOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
-            case MSG_POI_SEARCH_IN_CITY:
-                poiSearchMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
             case MSG_POI_NEARBY_SEARCH:
                 poiNearbySearchMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
@@ -2356,15 +2248,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             case MSG_NEXT_ROUTE_NODE:
                 nextRouteNodeMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
-            case MSG_GEOCODE:
-                geocodeMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_REVERSE_GEOCODE:
-                reverseGeocodeMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_GET_CURRENT_LOCATION:
-                getCurrentLocationMsg();
-                break;
             case MSG_START_LOCATION:
                 startLocationMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
@@ -2379,9 +2262,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 break;
             case MSG_REMOVE_OVERLAY:
                 removeOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_POI_SEARCH_DETAIL:
-                poiSearchDetailMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
             case MSG_SET_SCALE_VISIBLE:
                 setScaleVisibleMsg(bundle.getStringArray(BUNDLE_DATA));
@@ -2407,47 +2287,14 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             case MSG_CLEAR:
                 clearMsg();
                 break;
-            case MSG_DOWNLOAD:
-                downloadMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
             case MSG_PAUSE:
                 pauseMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_GET_AVAILABLE_CITY_LIST:
-                getAvailableCityListMsg();
-                break;
-            case MSG_IS_UPDATE:
-                isUpdateMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_DELETE:
-                deleteMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
             case MSG_RESTART:
                 restartMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
             case MSG_STOP_DOWNLOAD:
                 stopDownloadMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_GET_AVAILABLE_PROVINCE_LIST:
-                getAvailableProvinceListMsg();
-                break;
-            case MSG_GET_DOWNLOAD_LIST:
-                getDownloadListMsg();
-                break;
-            case MSG_GET_DOWNLOADING_LIST:
-                getDownloadingListMsg();
-                break;
-            case MSG_SET_CUSTOM_BUTTON:
-                setCustomButtonMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_REMOVE_CUSTOM_BUTTON:
-                deleteCustomButtonMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_SHOW_CUSTOM_BUTTONS:
-                showCustomButtonsMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_HIDE_CUSTOM_BUTTONS:
-                hideCustomButtonsMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
             default:
                 super.onHandleMessage(message);
@@ -2457,14 +2304,14 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private void callBackPluginJs(String methodName, String jsonData){
         String js = SCRIPT_HEADER + "if(" + methodName + "){"
                 + methodName + "('" + jsonData + "');}";
-        Log.i(TAG, "callBackPluginJs->js = " + js);
+        BDebug.i(TAG, "callBackPluginJs->js = " + js);
         onCallback(js);
     }
 
     private void callBackPluginJs(EUExGaodeMap brw, String methodName, String jsonData){
         String js = SCRIPT_HEADER + "if(" + methodName + "){"
                 + methodName + "('" + jsonData + "');}";
-        Log.i(TAG, "callBackPluginJs->js = " + js);
+        BDebug.i(TAG, "callBackPluginJs->js = " + js);
         brw.onCallback(js);
     }
 
@@ -2533,7 +2380,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
     @Override
-    public void cbGetCurrentLocation(AMapLocation location) {
+    public void cbGetCurrentLocation(AMapLocation location, int callbackId) {
         JSONObject json = new JSONObject();
         try {
             json.put(JsConst.LONGITUDE, location.getLongitude());
@@ -2542,11 +2389,15 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        callBackPluginJs(JsConst.CALLBACK_GET_CURRENT_LOCATION, json.toString());
+        if (callbackId!=-1) {
+            callbackToJs(callbackId,false,json);
+        }else{
+            callBackPluginJs(JsConst.CALLBACK_GET_CURRENT_LOCATION, json.toString());
+        }
     }
 
     @Override
-    public void cbGeocode(GeocodeResult result, int errorCode) {
+    public void cbGeocode(GeocodeResult result, int errorCode, int callbackId) {
         JSONObject jsonResult = new JSONObject();
         try {
             jsonResult.put(JsConst.ERRORCODE, errorCode);
@@ -2561,13 +2412,19 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            if (BDebug.DEBUG) {
+                e.printStackTrace();
+            }
         }
-        callBackPluginJs(JsConst.CALLBACK_GEOCODE, jsonResult.toString());
-    }
+        if (callbackId!=-1){
+            callbackToJs(callbackId,false,jsonResult);
+        }else{
+            callBackPluginJs(JsConst.CALLBACK_GEOCODE, jsonResult.toString());
+        }
+      }
 
     @Override
-    public void cbReverseGeocode(RegeocodeResult result, int errorCode) {
+    public void cbReverseGeocode(RegeocodeResult result, int errorCode, int callbackId) {
         JSONObject jsonResult = new JSONObject();
         try {
             jsonResult.put(JsConst.ERRORCODE, errorCode);
@@ -2579,11 +2436,15 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        callBackPluginJs(JsConst.CALLBACK_REVERSE_GEOCODE, jsonResult.toString());
+        if (callbackId!=-1){
+            callbackToJs(callbackId,false,jsonResult);
+        }else{
+            callBackPluginJs(JsConst.CALLBACK_REVERSE_GEOCODE, jsonResult.toString());
+        }
     }
 
     @Override
-    public void cbPoiSearch(PoiResult result, int errorCode) {
+    public void cbPoiSearch(PoiResult result, int errorCode, int callbackId) {
         ResultVO resultVO = new ResultVO<PoiItemVO>();
         resultVO.setErrorCode(errorCode);
         if (result != null && result.getPois() != null
@@ -2595,7 +2456,11 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             }
             resultVO.setData(list);
         }
-        callBackPluginJs(JsConst.CALLBACK_POI_SEARCH, DataHelper.gson.toJson(resultVO));
+        if (callbackId!=-1){
+            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(resultVO));
+        }else{
+            callBackPluginJs(JsConst.CALLBACK_POI_SEARCH, DataHelper.gson.toJson(resultVO));
+        }
     }
 
     @Override
@@ -2648,9 +2513,13 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
     @Override
-    public void cbDownload(DownloadResultVO data) {
-        String jsonResult = DataHelper.gson.toJson(data);
-        callBackPluginJs(JsConst.CALLBACK_DOWNLOAD, jsonResult);
+    public void cbDownload(DownloadResultVO data, int callbackId, boolean isLast) {
+        if(callbackId!=-1){
+            callbackToJs(callbackId,!isLast,DataHelper.gson.toJsonTree(data));
+        }else{
+            String jsonResult = DataHelper.gson.toJson(data);
+            callBackPluginJs(JsConst.CALLBACK_DOWNLOAD, jsonResult);
+        }
     }
 
     @Override
@@ -2660,40 +2529,64 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
     @Override
-    public void cbDelete(DownloadResultVO data) {
-        String jsonResult = DataHelper.gson.toJson(data);
-        callBackPluginJs(JsConst.CALLBACK_DELETE, jsonResult);
+    public void cbDelete(DownloadResultVO data, int callbackId, boolean isLast) {
+        if(callbackId!=-1){
+            callbackToJs(callbackId,!isLast,DataHelper.gson.toJsonTree(data));
+        }else{
+            String jsonResult = DataHelper.gson.toJson(data);
+            callBackPluginJs(JsConst.CALLBACK_DELETE, jsonResult);
+        }
     }
 
     @Override
-    public void cbGetDownloadingList(List<DownloadItemVO> data) {
-        String jsonResult = DataHelper.gson.toJson(data);
-        callBackPluginJs(JsConst.CALLBACK_GET_DOWNLOADING_LIST, jsonResult);
+    public void cbGetDownloadingList(List<DownloadItemVO> data, int callbackId) {
+        if(callbackId!=-1){
+            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+        }else{
+            String jsonResult = DataHelper.gson.toJson(data);
+            callBackPluginJs(JsConst.CALLBACK_GET_DOWNLOADING_LIST, jsonResult);
+        }
+     }
+
+    @Override
+    public void cbGetDownloadList(List<DownloadItemVO> data, int callbackId) {
+        if(callbackId!=-1){
+            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+        }else{
+            String jsonResult = DataHelper.gson.toJson(data);
+            callBackPluginJs(JsConst.CALLBACK_GET_DOWNLOAD_LIST, jsonResult);
+        }
     }
 
     @Override
-    public void cbGetDownloadList(List<DownloadItemVO> data) {
-        String jsonResult = DataHelper.gson.toJson(data);
-        callBackPluginJs(JsConst.CALLBACK_GET_DOWNLOAD_LIST, jsonResult);
+    public void cbGetAvailableCityList(List<AvailableCityVO> data, int callbackId) {
+        if(callbackId!=-1){
+            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+        }else{
+            String jsonResult = DataHelper.gson.toJson(data);
+            callBackPluginJs(JsConst.CALLBACK_GET_AVAILABLE_CITY_LIST, jsonResult);
+        }
     }
 
     @Override
-    public void cbGetAvailableCityList(List<AvailableCityVO> data) {
-        String jsonResult = DataHelper.gson.toJson(data);
-        callBackPluginJs(JsConst.CALLBACK_GET_AVAILABLE_CITY_LIST, jsonResult);
-    }
+    public void cbGetAvailableProvinceList(List<AvailableProvinceVO> data, int callbackId) {
+        if(callbackId!=-1){
+            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+        }else{
+            String jsonResult = DataHelper.gson.toJson(data);
+            callBackPluginJs(JsConst.CALLBACK_GET_AVAILABLE_PROVINCE_LIST, jsonResult);
+        }
+     }
 
     @Override
-    public void cbGetAvailableProvinceList(List<AvailableProvinceVO> data) {
-        String jsonResult = DataHelper.gson.toJson(data);
-        callBackPluginJs(JsConst.CALLBACK_GET_AVAILABLE_PROVINCE_LIST, jsonResult);
-    }
-
-    @Override
-    public void cbIsUpdate(UpdateResultVO data) {
-        String jsonResult = DataHelper.gson.toJson(data);
-        callBackPluginJs(JsConst.CALLBACK_IS_UPDATE, jsonResult);
-    }
+    public void cbIsUpdate(UpdateResultVO data, int callbackId) {
+        if(callbackId!=-1){
+            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+        }else{
+            String jsonResult = DataHelper.gson.toJson(data);
+            callBackPluginJs(JsConst.CALLBACK_IS_UPDATE, jsonResult);
+        }
+     }
 
     @Override
     public void cbSetCustomButton(CustomButtonResultVO data) {

@@ -89,10 +89,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         return false;
     }
 
-    public void download(DownloadItemVO downloadVO) {
-        if (offlineMapManager == null){
-            offlineMapManager = new OfflineMapManager(mContext, this);
-        }
+    public void download(DownloadItemVO downloadVO, int callbackId, boolean isLast) {
         DownloadResultVO data = new DownloadResultVO();
         data.setName(downloadVO.getName());
         if(isDownloading(downloadVO.getName()) && !isDownloadingError(downloadVO.getName())){
@@ -118,7 +115,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
             }
         }
         if (mListener != null){
-            mListener.cbDownload(data);
+            mListener.cbDownload(data,callbackId,isLast);
         }
     }
 
@@ -172,7 +169,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         }
     }
 
-    public void deleteList(List<String> list) {
+    public void deleteList(List<String> list, int callbackId) {
         if (offlineMapManager == null){
             offlineMapManager = new OfflineMapManager(mContext, this);
         }
@@ -193,14 +190,14 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
             }
             list = allList;
         }
-        if (list != null && list.size() > 0){
+        if (list.size() > 0){
             for (int i = 0; i < list.size(); i++){
-                delete(list.get(i));
+                delete(list.get(i),callbackId,i==(list.size()-1));
             }
         }
     }
 
-    private void delete(String city){
+    private void delete(String city, int callbackId, boolean isLast){
         DownloadResultVO data = new DownloadResultVO();
         data.setName(city);
         boolean isDelete;
@@ -225,7 +222,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
             getDownload();
         }
         if (mListener != null){
-            mListener.cbDelete(data);
+            mListener.cbDelete(data,callbackId,isLast);
         }
     }
 
@@ -302,7 +299,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         }
     }
 
-    public void getAvailableCityList() {
+    public void getAvailableCityList(final int callbackId) {
         if (offlineMapManager == null){
             offlineMapManager = new OfflineMapManager(mContext, this);
         }
@@ -320,7 +317,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
                         }
                     }
                     if (mListener != null){
-                        mListener.cbGetAvailableCityList(resultList);
+                        mListener.cbGetAvailableCityList(resultList,callbackId);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -357,7 +354,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         offlineMapManager.stop();
     }
 
-    public void getAvailableProvinceList() {
+    public void getAvailableProvinceList(final int callbackId) {
         if (offlineMapManager == null){
             offlineMapManager = new OfflineMapManager(mContext, this);
         }
@@ -375,7 +372,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
                         }
                     }
                     if (mListener != null){
-                        mListener.cbGetAvailableProvinceList(resultList);
+                        mListener.cbGetAvailableProvinceList(resultList,callbackId);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -384,11 +381,12 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         }).start();
     }
 
-    public void getDownloadList() {
+    public List<DownloadItemVO> getDownloadList(int callbackId) {
         List<DownloadItemVO> list = getDownload();
         if (mListener != null){
-            mListener.cbGetDownloadList(list);
+            mListener.cbGetDownloadList(list,callbackId);
         }
+        return list;
     }
 
     private List<DownloadItemVO> getDownload(){
@@ -408,14 +406,15 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         return  resultList;
     }
 
-    public void getDownloadingList() {
+    public List<DownloadItemVO> getDownloadingList(int callbackId) {
         List<DownloadItemVO> list = getDownloading();
         if (mListener != null){
-            mListener.cbGetDownloadingList(list);
+            mListener.cbGetDownloadingList(list,callbackId);
         }
         if (!isDownloading){
             sendStartDownloadMsg();
         }
+        return list;
     }
 
     private List<DownloadItemVO> getDownloading(){
@@ -459,19 +458,22 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         return result;
     }
 
-    public void isUpdate(DownloadItemVO data) {
+    public UpdateResultVO isUpdate(DownloadItemVO data, int callbackId) {
         boolean isUpdate = isNeedUpdate(data);
         UpdateResultVO resultVO = new UpdateResultVO(data.getName(), isUpdate ? 0:1);
         if (mListener != null){
-            mListener.cbIsUpdate(resultVO);
+            mListener.cbIsUpdate(resultVO,callbackId);
         }
-
+        return resultVO;
     }
 
-    private boolean isNeedUpdate(DownloadItemVO data){
+    public void confirmOfflineMapMgrExist(){
         if (offlineMapManager == null){
             offlineMapManager = new OfflineMapManager(mContext, this);
         }
+    }
+
+    private boolean isNeedUpdate(DownloadItemVO data){
         boolean isUpdate;
         try {
             switch (data.getType()){

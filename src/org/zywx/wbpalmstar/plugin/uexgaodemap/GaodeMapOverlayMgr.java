@@ -18,11 +18,9 @@ import com.amap.api.maps.model.Polygon;
 import com.amap.api.maps.model.PolygonOptions;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
-import com.amap.api.maps.model.TileOverlayOptions;
 
-import org.zywx.wbpalmstar.base.cache.ImageLoadTask;
-import org.zywx.wbpalmstar.base.cache.ImageLoadTask$ImageLoadTaskCallback;
-import org.zywx.wbpalmstar.base.cache.ImageLoaderManager;
+import org.zywx.wbpalmstar.base.ACEImageLoader;
+import org.zywx.wbpalmstar.base.listener.ImageLoaderListener;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.ArcBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.GroundBean;
@@ -34,7 +32,6 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.overlay.CircleOverlay;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.overlay.GroundNOverlay;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.overlay.PolygonOverlay;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.overlay.PolylineOverlay;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 
 import java.util.ArrayList;
@@ -45,13 +42,11 @@ import java.util.List;
 public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
 
     private HashMap<String, BaseOverlay> mOverlays = new HashMap<String, BaseOverlay>();
-    private ImageLoaderManager manager;
     private List<LatLng> mBoundsOverlays;
 
     public GaodeMapOverlayMgr(Context mContext, AMap map,
                               OnCallBackListener mListener, List<LatLng> overlays) {
         super(mContext, map, mListener);
-        manager = ImageLoaderManager.initImageLoaderManager(mContext);
         this.mBoundsOverlays = overlays;
     }
 
@@ -176,13 +171,9 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
         final GroundNOverlay groundOverlay = new GroundNOverlay();
         final GroundOverlayOptions option = bean.getData();
         if (option != null && !TextUtils.isEmpty(bean.getImageUrl())){
-            manager.asyncLoad(new ImageLoadTask(bean.getImageUrl()) {
+            ACEImageLoader.getInstance().getBitmap(bean.getImageUrl(), new ImageLoaderListener() {
                 @Override
-                protected Bitmap doInBackground() {
-                    return GaodeUtils.getImage(mContext, filePath);
-                }
-            }.addCallback(new ImageLoadTask$ImageLoadTaskCallback() {
-                public void onImageLoaded(ImageLoadTask task, Bitmap bitmap) {
+                public void onLoaded(Bitmap bitmap) {
                     if (bitmap != null) {
                         BitmapDescriptor bd = BitmapDescriptorFactory.fromBitmap(bitmap);
                         option.image(bd);
@@ -193,7 +184,7 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
                         mOverlays.put(bean.getId(), groundOverlay);
                     }
                 }
-            }));
+            });
         }
     }
 

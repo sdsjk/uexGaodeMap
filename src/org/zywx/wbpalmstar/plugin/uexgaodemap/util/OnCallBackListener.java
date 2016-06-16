@@ -27,22 +27,22 @@ public interface OnCallBackListener extends Serializable{
     public void onReceiveLocation(AMapLocation location);
     public void onMapClick(LatLng point);
     public void onMapLongClick(LatLng point);
-    public void cbGetCurrentLocation(AMapLocation location);
-    public void cbGeocode(GeocodeResult geocodeResult, int errorCode);
-    public void cbReverseGeocode(RegeocodeResult regeocodeResult, int errorCode);
-    public void cbPoiSearch(PoiResult result, int errorCode);
+    public void cbGetCurrentLocation(AMapLocation location, int callbackId);
+    public void cbGeocode(GeocodeResult geocodeResult, int errorCode, int callbackId);
+    public void cbReverseGeocode(RegeocodeResult regeocodeResult, int errorCode, int callbackId);
+    public void cbPoiSearch(PoiResult result, int errorCode, int callbackId);
     public void cbPoiSearchDetail(PoiItemDetail result, int errorCode);
-    public void cbDownload(DownloadResultVO data);
+    public void cbDownload(DownloadResultVO data, int callbackId, boolean isLast);
     public void onDownload(DownloadStatusVO data);
-    public void cbDelete(DownloadResultVO data);
+    public void cbDelete(DownloadResultVO data, int callbackId, boolean isLast);
 
-    public void cbGetDownloadingList(List<DownloadItemVO> data);
-    public void cbGetDownloadList(List<DownloadItemVO> data);
-    public void cbGetAvailableCityList(List<AvailableCityVO> data);
+    public void cbGetDownloadingList(List<DownloadItemVO> data, int callbackId);
+    public void cbGetDownloadList(List<DownloadItemVO> data, int callbackId);
+    public void cbGetAvailableCityList(List<AvailableCityVO> data, int callbackId);
 
-    public void cbGetAvailableProvinceList(List<AvailableProvinceVO> data);
+    public void cbGetAvailableProvinceList(List<AvailableProvinceVO> data, int callbackId);
 
-    public void cbIsUpdate(UpdateResultVO data);
+    public void cbIsUpdate(UpdateResultVO data, int callbackId);
 
     public void cbSetCustomButton(CustomButtonResultVO data);
     public void cbRemoveCustomButton(CustomButtonResultVO data);

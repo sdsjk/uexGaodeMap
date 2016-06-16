@@ -1,19 +1,11 @@
 package org.zywx.wbpalmstar.plugin.uexgaodemap.util;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.webkit.URLUtil;
 
 import com.amap.api.maps.model.LatLng;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,104 +16,11 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.JsConst;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomBubbleVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GaodeUtils {
-    public static Bitmap downloadImageFromNetwork(String url) {
-        InputStream is = null;
-        Bitmap bitmap = null;
-        try {
-            HttpGet httpGet = new HttpGet(url);
-            BasicHttpParams httpParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
-            HttpConnectionParams.setSoTimeout(httpParams, 30000);
-            HttpResponse httpResponse = new DefaultHttpClient(httpParams)
-                    .execute(httpGet);
-            int responseCode = httpResponse.getStatusLine().getStatusCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                is = httpResponse.getEntity().getContent();
-                byte[] data = transStreamToBytes(is, 4096);
-                if (data != null) {
-                    bitmap = BitmapFactory
-                            .decodeByteArray(data, 0, data.length);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } catch (OutOfMemoryError e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return bitmap;
-    }
-
-    public static Bitmap getImage(Context ctx, String imgUrl) {
-        if (imgUrl == null || imgUrl.length() == 0) {
-            return null;
-        }
-        Bitmap bitmap = null;
-        InputStream is = null;
-        try {
-            if (URLUtil.isNetworkUrl(imgUrl)) {
-                bitmap = downloadImageFromNetwork(imgUrl);
-            } else {
-                bitmap = BUtility.getLocalImg(ctx,imgUrl);
-            }
-        } catch (OutOfMemoryError e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return bitmap;
-    }
-
-    public static byte[] transStreamToBytes(InputStream is, int buffSize) {
-        if (is == null) {
-            return null;
-        }
-        if (buffSize <= 0) {
-            throw new IllegalArgumentException(
-                    "buffSize can not less than zero.....");
-        }
-        byte[] data = null;
-        byte[] buffer = new byte[buffSize];
-        int actualSize = 0;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            while ((actualSize = is.read(buffer)) != -1) {
-                baos.write(buffer, 0, actualSize);
-            }
-            data = baos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                baos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return data;
-    }
 
     public static List<MarkerBean> getAddMarkersData(EBrowserView ebrw, String json) {
         List<MarkerBean> list = new ArrayList<MarkerBean>();

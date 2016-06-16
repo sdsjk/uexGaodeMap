@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.amap.api.maps.AMap;
@@ -20,14 +19,12 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 
-import org.zywx.wbpalmstar.base.cache.ImageLoadTask;
-import org.zywx.wbpalmstar.base.cache.ImageLoadTask$ImageLoadTaskCallback;
-import org.zywx.wbpalmstar.base.cache.ImageLoaderManager;
+import org.zywx.wbpalmstar.base.ACEImageLoader;
+import org.zywx.wbpalmstar.base.listener.ImageLoaderListener;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.BubbleLayoutBaseVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomBubbleVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bubblelayout.CustomBubbleMarkerLayout;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 
 import java.util.ArrayList;
@@ -43,7 +40,6 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
     private HashMap<String, Marker> mMarkers = new HashMap<String, Marker>();
     private HashMap<String, InfoWindowAdapter> mLayouts = new
             HashMap<String, InfoWindowAdapter>();
-    private ImageLoaderManager manager;
     private List<LatLng> mOverlays;
     private BaseHandler mHandler;
 
@@ -51,7 +47,6 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
     public GaodeMapMarkerMgr(Context cxt, AMap map,
                              OnCallBackListener listener, List<LatLng> markers) {
         super(cxt, map, listener);
-        manager = ImageLoaderManager.initImageLoaderManager(mContext);
         this.mOverlays = markers;
         this.mHandler = new BaseHandler(Looper.getMainLooper());
     }
@@ -135,9 +130,7 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-//            ACEImageLoader.getInstance();
-//            return ImageLoader.getInstance().loadImageSync(bean.getIcon());
-            return GaodeUtils.getImage(mContext, bean.getIcon());
+            return ACEImageLoader.getInstance().getBitmapSync(bean.getIcon());
         }
 
         @Override
@@ -191,19 +184,15 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
         if (marker == null) return;
         final boolean isShowInfoWindow = marker.isInfoWindowShown();
         if (!TextUtils.isEmpty(bean.getIcon())){
-            manager.asyncLoad(new ImageLoadTask(bean.getIcon()) {
+            ACEImageLoader.getInstance().getBitmap(bean.getIcon(), new ImageLoaderListener() {
                 @Override
-                protected Bitmap doInBackground() {
-                    return GaodeUtils.getImage(mContext, filePath);
-                }
-            }.addCallback(new ImageLoadTask$ImageLoadTaskCallback() {
-                public void onImageLoaded(ImageLoadTask task, Bitmap bitmap) {
-                    if (bitmap != null) {
+                public void onLoaded(Bitmap bitmap) {
+                    if (bitmap!=null){
                         BitmapDescriptor bd = BitmapDescriptorFactory.fromBitmap(bitmap);
                         marker.setIcon(bd);
                     }
                 }
-            }));
+            });
         }
         if (bean.getPosition() != null){
             marker.setPosition(bean.getPosition());
