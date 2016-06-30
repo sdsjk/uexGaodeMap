@@ -29,12 +29,7 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
-import com.amap.api.services.poisearch.Cinema;
-import com.amap.api.services.poisearch.Dining;
-import com.amap.api.services.poisearch.Hotel;
-import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
-import com.amap.api.services.poisearch.Scenic;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -1879,19 +1874,13 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
             errorCallback(0, 0, "error params!");
         }
-        GaodeMapOfflineManager.getInstance(mContext,this).confirmOfflineMapMgrExist();
-        for (int i = 0; i < list.size(); i++){
+         for (int i = 0; i < list.size(); i++){
             final int finalI = i;
             final int finalCallbackId = callbackId;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    GaodeMapOfflineManager.getInstance(mContext, EUExGaodeMap.this).
-                            download(list.get(finalI), finalCallbackId, finalI ==
-                            (list.size()
-                            -1));
-                }
-            }).start();
+             GaodeMapOfflineManager.getInstance(mContext, EUExGaodeMap.this).
+                     download(list.get(finalI), finalCallbackId, finalI ==
+                             (list.size()
+                                     - 1));
          }
     }
 
@@ -1927,10 +1916,10 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         GaodeMapOfflineManager.getInstance(mContext, this).getAvailableCityList(callbackId);
     }
 
-    public void isUpdate(String[] params) {
+    public boolean isUpdate(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return false;
         }
         String json = params[0];
         int callbackId=-1;
@@ -1956,15 +1945,8 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             if (!TextUtils.isEmpty(name)){
                 data.setName(name);
                 data.setStatus(OfflineMapStatus.CHECKUPDATES);
-                GaodeMapOfflineManager.getInstance(mContext,this).confirmOfflineMapMgrExist();
-                final int finalCallbackId = callbackId;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        GaodeMapOfflineManager.getInstance(mContext, EUExGaodeMap.this).
-                                isUpdate(data, finalCallbackId);
-                    }
-                }).start();
+                return GaodeMapOfflineManager.getInstance(mContext, EUExGaodeMap.this).
+                                isUpdate(data, callbackId);
              }else{
                 errorCallback(0, 0, "error params!");
             }
@@ -1972,6 +1954,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
             errorCallback(0, 0, "error params!");
         }
+        return false;
     }
 
     public void delete(String[] params) {
@@ -2381,18 +2364,28 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
 
     @Override
     public void cbGetCurrentLocation(AMapLocation location, int callbackId) {
-        JSONObject json = new JSONObject();
-        try {
-            json.put(JsConst.LONGITUDE, location.getLongitude());
-            json.put(JsConst.LATITUDE, location.getLatitude());
-            json.put(JsConst.TIMESTAMP, location.getTime());
-        } catch (JSONException e) {
-            e.printStackTrace();
+        JSONObject json = null;
+        String resultStr=null;
+        if (location != null) {
+            json = new JSONObject();
+            try {
+                json.put(JsConst.LONGITUDE, location.getLongitude());
+                json.put(JsConst.LATITUDE, location.getLatitude());
+                json.put(JsConst.TIMESTAMP, location.getTime());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (!TextUtils.isEmpty(location.getErrorInfo())) {
+                BDebug.i(location.getErrorInfo());
+            }
+        }
+        if (json!=null){
+            resultStr=json.toString();
         }
         if (callbackId!=-1) {
             callbackToJs(callbackId,false,json);
         }else{
-            callBackPluginJs(JsConst.CALLBACK_GET_CURRENT_LOCATION, json.toString());
+            callBackPluginJs(JsConst.CALLBACK_GET_CURRENT_LOCATION, resultStr);
         }
     }
 
@@ -2460,55 +2453,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(resultVO));
         }else{
             callBackPluginJs(JsConst.CALLBACK_POI_SEARCH, DataHelper.gson.toJson(resultVO));
-        }
-    }
-
-    @Override
-    public void cbPoiSearchDetail(PoiItemDetail result, int errorCode) {
-        ResultVO resultVO = null;
-        PoiItemDetail.DeepType type = result.getDeepType();
-        if (type != null){
-            switch (type){
-                case DINING://餐饮深度信息类型；
-                    resultVO = new ResultVO<Dining>();
-                    resultVO.setData(result.getDining());
-                    break;
-                case HOTEL://酒店深度信息类型；
-                    resultVO = new ResultVO<Hotel>();
-                    resultVO.setData(result.getHotel());
-                    break;
-                case CINEMA://影院深度信息类型；
-                    resultVO = new ResultVO<Cinema>();
-                    resultVO.setData(result.getCinema());
-                    break;
-                case SCENIC://景点深度信息类型。
-                    resultVO = new ResultVO<Scenic>();
-                    resultVO.setData(result.getScenic());
-                    break;
-                case UNKNOWN://未知深度信息类型；
-                    break;
-            }
-            if (resultVO != null){
-                resultVO.setType(type+"");
-            }
-        }else if ((result.getGroupbuys() != null && result.getGroupbuys().size() > 0)
-                || (result.getDiscounts() != null && result.getDiscounts().size() > 0)){
-            resultVO = new ResultVO();
-            if (result.getDiscounts() != null
-                    && result.getDiscounts().size() > 0){
-                resultVO.setDiscount(result.getDiscounts());
-            }
-            if (result.getGroupbuys() != null
-                    && result.getGroupbuys().size() > 0){
-                resultVO.setGroupbuy(result.getGroupbuys());
-            }
-        }else{
-            resultVO = new ResultVO<PoiItemDetail>();
-            resultVO.setData(result);
-        }
-        if (resultVO != null){
-            resultVO.setErrorCode(errorCode);
-            callBackPluginJs(JsConst.CALLBACK_POI_SEARCH_DETAIL, DataHelper.gson.toJson(resultVO));
         }
     }
 

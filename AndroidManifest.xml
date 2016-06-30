@@ -3,12 +3,14 @@
           xmlns:android="http://schemas.android.com/apk/res/android"
           android:installLocation="internalOnly"
           android:versionCode="300"
-          android:versionName="3.0">
+          android:versionName="3.0"
+          xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:name="org.zywx.wbpalmstar.widgetone.WidgetOneApplication"
         android:allowClearUserData="false"
-        android:hardwareAccelerated="true"
+        android:hardwareAccelerated="false"
+        tools:replace="android:hardwareAccelerated"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:vmSafeMode="true">
@@ -27,6 +29,7 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="bc31e04d2366b6a605b4f57ae5728cc4"/>
+        <service android:name="com.amap.api.location.APSService" />
     </application>
 
 

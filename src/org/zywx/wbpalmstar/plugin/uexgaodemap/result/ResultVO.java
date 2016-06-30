@@ -1,10 +1,7 @@
 package org.zywx.wbpalmstar.plugin.uexgaodemap.result;
 
-import com.amap.api.services.poisearch.Discount;
-import com.amap.api.services.poisearch.Groupbuy;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class ResultVO<T> implements Serializable {
     private static final long serialVersionUID = 1190316894677877554L;
@@ -12,10 +9,6 @@ public class ResultVO<T> implements Serializable {
     private String type;
 
     private T data;
-
-    private List<Discount> discount;
-
-    private List<Groupbuy> groupbuy;
 
     private int errorCode;
 
@@ -43,19 +36,4 @@ public class ResultVO<T> implements Serializable {
         this.errorCode = errorCode;
     }
 
-    public List<Discount> getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(List<Discount> discount) {
-        this.discount = discount;
-    }
-
-    public List<Groupbuy> getGroupbuy() {
-        return groupbuy;
-    }
-
-    public void setGroupbuy(List<Groupbuy> groupbuy) {
-        this.groupbuy = groupbuy;
-    }
 }
