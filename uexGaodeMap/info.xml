@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexGaodeMap" version="4.0.0" build="14">
-        <info>14:4.0</info>
-        <build>13:open接口添加回调</build>
-        <build>12:修复闪退的问题</build>
-        <build>11:修复闪退的问题</build>
-        <build>10:去掉插件中的ActivityGroup,配合引擎升级</build>
-        <build>9:添加相同id的圆形覆盖物时，改为替换原来的</build>
-        <build>8:解决关闭地图黑屏的问题</build>
-        <build>7:解决打开地图黑屏的问题</build>
-        <build>6:open接口增加地图是否随网页滚动接口</build>
-        <bulid>5:地理编码和反地理编码回调接口增加参数</bulid>
-        <bulid>4:新增自定义按钮相关接口</bulid>
-        <bulid>3:新增离线地图相关方法，优化添加标注接口使其支持自定义气泡</bulid>
-        <bulid>2:新增显示地图比例尺方法，新增批量删除标注或覆盖物的方法</bulid>
-        <bulid>1:插件包添加dex文件夹</bulid>
-        <bulid>0:高德地图插件</bulid>
+        uexName="uexGaodeMap" version="4.0.0" build="0">
+        <info>14:高德地图 4.0 插件</info>
     </plugin>
 </uexplugins>

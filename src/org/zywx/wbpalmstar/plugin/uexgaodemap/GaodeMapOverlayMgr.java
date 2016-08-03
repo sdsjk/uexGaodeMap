@@ -50,8 +50,8 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
         this.mBoundsOverlays = overlays;
     }
 
-    public void addArc(ArcBean bean){
-        if (bean == null || mOverlays.containsKey(bean.getId())) return;
+    public boolean addArc(ArcBean bean){
+        if (bean == null || mOverlays.containsKey(bean.getId())) return false;
         ArcOverlay arcOverlay = new ArcOverlay();
         ArcOptions options = bean.getData();
         if (options != null){
@@ -66,9 +66,11 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
                     addToBoundsList(start);
                     addToBoundsList(center);
                     addToBoundsList(end);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     private void addToBoundsList(LatLng latLng){
@@ -83,8 +85,8 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
         }
     }
 
-    public void addPolylines(PolylineBean bean){
-        if (bean == null || mOverlays.containsKey(bean.getId())) return;
+    public boolean addPolylines(PolylineBean bean){
+        if (bean == null || mOverlays.containsKey(bean.getId())) return false;
         PolylineOverlay polylineOverlay = new PolylineOverlay();
         PolylineOptions option = bean.getData();
         if (option != null){
@@ -92,8 +94,10 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
             if (polyline != null){
                 polylineOverlay.setPolyline(polyline);
                 mOverlays.put(bean.getId(), polylineOverlay);
+                return true;
             }
         }
+        return false;
     }
 
     public void removeOverlay(String id){
@@ -134,9 +138,9 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
         }
     }
 
-    public void addCircle(CircleBean bean) {
+    public boolean addCircle(CircleBean bean) {
         if (bean == null) {
-            return;
+            return false;
         }
         if (mOverlays.containsKey(bean.getId())){
             remove(bean.getId());
@@ -149,12 +153,14 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
             if (circle != null){
                 circleOverlay.setCircle(circle);
                 mOverlays.put(bean.getId(), circleOverlay);
+                return true;
             }
         }
+        return false;
     }
 
-    public void addPolygon(PolygonBean bean) {
-        if (bean == null || mOverlays.containsKey(bean.getId())) return;
+    public boolean addPolygon(PolygonBean bean) {
+        if (bean == null || mOverlays.containsKey(bean.getId())) return false;
         PolygonOverlay polygonOverlay = new PolygonOverlay();
         PolygonOptions option = bean.getData();
         if (option != null){
@@ -162,12 +168,14 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
             if (polygon != null){
                 polygonOverlay.setPolygon(polygon);
                 mOverlays.put(bean.getId(), polygonOverlay);
+                return true;
             }
         }
+        return false;
     }
 
-    public void addGround(final GroundBean bean) {
-        if (bean == null || mOverlays.containsKey(bean.getId())) return;
+    public boolean addGround(final GroundBean bean) {
+        if (bean == null || mOverlays.containsKey(bean.getId())) return false;
         final GroundNOverlay groundOverlay = new GroundNOverlay();
         final GroundOverlayOptions option = bean.getData();
         if (option != null && !TextUtils.isEmpty(bean.getImageUrl())){
@@ -186,6 +194,7 @@ public class GaodeMapOverlayMgr extends GaodeMapBaseMgr {
                 }
             });
         }
+        return true;
     }
 
     public void clean() {

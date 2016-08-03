@@ -60,6 +60,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBoundBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolylineBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.RectangleBoundBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.SearchBean;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 
 import java.util.ArrayList;
@@ -345,11 +346,11 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
         }
     }
 
-    public void addMarkersOverlay(List<MarkerBean> list) {
+    public List<String> addMarkersOverlay(List<MarkerBean> list) {
         if (markerMgr == null) {
-            return;
+            return null;
         }
-        markerMgr.addMarkers(list);
+        return markerMgr.addMarkers(list);
     }
 
     public void updateMarkersOverlay(MarkerBean bean) {
@@ -380,28 +381,28 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
         markerMgr.hideBubble();
     }
 
-    public void addPolylineOverlay(PolylineBean bean) {
-        overlayMgr.addPolylines(bean);
+    public boolean addPolylineOverlay(PolylineBean bean) {
+        return overlayMgr.addPolylines(bean);
     }
 
     public void removeOverlay(String id) {
         overlayMgr.removeOverlay(id);
     }
 
-    public void addArcOverlay(ArcBean bean) {
-        overlayMgr.addArc(bean);
+    public boolean addArcOverlay(ArcBean bean) {
+        return overlayMgr.addArc(bean);
     }
 
-    public void addCircleOverlay(CircleBean bean) {
-        overlayMgr.addCircle(bean);
+    public boolean addCircleOverlay(CircleBean bean) {
+        return overlayMgr.addCircle(bean);
     }
 
-    public void addPolygonOverlay(PolygonBean bean) {
-        overlayMgr.addPolygon(bean);
+    public boolean addPolygonOverlay(PolygonBean bean) {
+        return overlayMgr.addPolygon(bean);
     }
 
-    public void addGroundOverlay(GroundBean bean) {
-        overlayMgr.addGround(bean);
+    public boolean addGroundOverlay(GroundBean bean) {
+        return overlayMgr.addGround(bean);
     }
 
     public void getCurrentLocation(int callbackId) {
@@ -472,7 +473,11 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
 
     public CustomButtonResultVO setCustomButton(final CustomButtonVO dataVO) {
         CustomButtonResultVO resultVO = new CustomButtonResultVO();
-        resultVO.setId(dataVO.getId());
+        if (TextUtils.isEmpty(dataVO.getId())) {
+            resultVO.setId(String.valueOf(GaodeUtils.getRandomId()));
+        } else {
+            resultVO.setId(dataVO.getId());
+        }
         if (!isAlreadyAdded(dataVO.getId())) {
             FrameLayout.LayoutParams lpParams = new FrameLayout.LayoutParams(
                     dataVO.getWidth(), dataVO.getHeight());

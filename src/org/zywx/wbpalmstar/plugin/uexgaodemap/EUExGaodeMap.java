@@ -678,27 +678,19 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         getAMapActivity().setOverlookEnable(type);
     }
 
-    public void addMarkersOverlay(String[] params) {
+    public List<String> addMarkersOverlay(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_ADD_MARKERS_OVERLAY;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void addMarkersOverlayMsg(String[] params) {
         String json = params[0];
         List<MarkerBean> list = GaodeUtils.getAddMarkersData(mBrwView, json);
         if (getAMapActivity() != null){
-            getAMapActivity().addMarkersOverlay(list);
+            return getAMapActivity().addMarkersOverlay(list);
         }
+        return null;
     }
+
 
     public void setMarkerOverlay(String[] params) {
         if (params == null || params.length < 1) {
@@ -722,6 +714,20 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         }
     }
 
+    public void updateMarkerOverLay(String [] params) {
+        if (params == null || params.length < 2) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        String id = params[0];
+        String json = params[1];
+        MarkerBean bean = GaodeUtils.getMarkerData(mBrwView, id, json);
+        if (getAMapActivity() != null){
+            getAMapActivity().updateMarkersOverlay(bean);
+        }
+
+
+    }
     public void showBubble(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
@@ -789,26 +795,17 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         }
     }
 
-    public void addPolylineOverlay(String[] params) {
+    public String addPolylineOverlay(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_ADD_POLYLINE_OVERLAY;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void addPolylineOverlayMsg(String[] params) {
         String json = params[0];
         PolylineBean bean = null;
+        String id = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
-            String id = jsonObject.getString(JsConst.ID);
+            id = jsonObject.optString(JsConst.ID, String.valueOf(GaodeUtils.getRandomId()));
             bean = new PolylineBean();
             bean.setId(id);
             PolylineOptions option = new PolylineOptions();
@@ -834,31 +831,26 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (bean != null && getAMapActivity() != null){
-            getAMapActivity().addPolylineOverlay(bean);
+            boolean flag =  getAMapActivity().addPolylineOverlay(bean);
+            if (flag) {
+                return id;
+            }
         }
+        return null;
     }
 
-    public void addArcOverlay(String[] params) {
+    public String addArcOverlay(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_ADD_ARC_OVERLAY;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void addArcOverlayMsg(String[] params) {
         String json = params[0];
         ArcBean bean = null;
+        String id = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
             bean = new ArcBean();
-            String id = jsonObject.getString(JsConst.ID);
+            id = jsonObject.optString(JsConst.ID, String.valueOf(GaodeUtils.getRandomId()));
             bean.setId(id);
             ArcOptions option = new ArcOptions();
             if (jsonObject.has(JsConst.STROKECOLOR)){
@@ -884,30 +876,25 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (bean != null && getAMapActivity() != null){
-            getAMapActivity().addArcOverlay(bean);
+            boolean flag = getAMapActivity().addArcOverlay(bean);
+            if (flag) {
+                return id;
+            }
         }
+        return null;
     }
 
-    public void addCircleOverlay(String[] params) {
+    public String addCircleOverlay(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_ADD_CIRCLE_OVERLAY;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void addCircleOverlayMsg(String[] params) {
         String json = params[0];
         CircleBean bean = null;
+        String id = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
-            String id = jsonObject.getString(JsConst.ID);
+            id = jsonObject.optString(JsConst.ID,  String.valueOf(GaodeUtils.getRandomId()));
             CircleOptions option = new CircleOptions();
             String longitude = jsonObject.getString(JsConst.LONGITUDE);
             String latitude = jsonObject.getString(JsConst.LATITUDE);
@@ -934,31 +921,26 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (bean != null && getAMapActivity() != null){
-            getAMapActivity().addCircleOverlay(bean);
+            boolean flag = getAMapActivity().addCircleOverlay(bean);
+            if (flag) {
+                return id;
+            }
         }
+        return null;
     }
 
-    public void addPolygonOverlay(String[] params) {
+    public String addPolygonOverlay(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_ADD_POLYGON_OVERLAY;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void addPolygonOverlayMsg(String[] params) {
         String json = params[0];
         PolygonBean bean = null;
+        String id = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
             PolygonOptions option = new PolygonOptions();
-            String id = jsonObject.getString(JsConst.ID);
+            id = jsonObject.optString(JsConst.ID, String.valueOf(GaodeUtils.getRandomId()));
             JSONArray dataArray = new JSONArray(jsonObject.getString(JsConst.PROPERTY));
             for (int i = 0; i < dataArray.length(); i++){
                 JSONObject item = dataArray.optJSONObject(i);
@@ -986,30 +968,25 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (bean != null && getAMapActivity() != null){
-            getAMapActivity().addPolygonOverlay(bean);
+            boolean flag = getAMapActivity().addPolygonOverlay(bean);
+            if (flag) {
+                return id;
+            }
         }
+        return null;
     }
 
-    public void addGroundOverlay(String[] params) {
+    public String addGroundOverlay(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return;
+            return null;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_ADD_GROUND_OVERLAY;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void addGroundOverlayMsg(String[] params) {
         String json = params[0];
         GroundBean bean = null;
+        String id = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
-            String id = jsonObject.getString(JsConst.ID);
+            id = jsonObject.optString(JsConst.ID, String.valueOf(GaodeUtils.getRandomId()));
             String imgUrl = jsonObject.getString(JsConst.IMAGEURL);
             GroundOverlayOptions option = new GroundOverlayOptions();
             String property = jsonObject.getString(JsConst.PROPERTY);
@@ -1052,9 +1029,14 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (bean != null && getAMapActivity() != null){
-            getAMapActivity().addGroundOverlay(bean);
+            boolean flag = getAMapActivity().addGroundOverlay(bean);
+            if (flag) {
+                return id;
+            }
         }
+        return null;
     }
+
 
     public void addTextOverlay(String[] params) {
         if (params == null || params.length < 1) {
@@ -2044,7 +2026,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         GaodeMapOfflineManager.getInstance(mContext, this).getDownloadingList(callbackId);
     }
 
-    public CustomButtonResultVO setCustomButton(String[] params) {
+    public String setCustomButton(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
             return null;
@@ -2061,21 +2043,25 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             dataVo.setBgImage(desPath);
         }
         if (getAMapActivity() != null){
-            return getAMapActivity().setCustomButton(dataVo);
+            CustomButtonResultVO vo =  getAMapActivity().setCustomButton(dataVo);
+            if (vo.isSuccess()) {
+                return vo.getId();
+            }
         }
         return null;
     }
 
-    public CustomButtonResultVO deleteCustomButton(String[] params) {
+    public boolean deleteCustomButton(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
-            return null;
+            return false;
         }
         String id = params[0];
         if (!TextUtils.isEmpty(id) && getAMapActivity() != null){
-            return getAMapActivity().deleteCustomButton(id);
+            CustomButtonResultVO vo =  getAMapActivity().deleteCustomButton(id);
+            return vo.isSuccess();
         }
-        return null;
+        return false;
     }
 
     public CustomButtonDisplayResultVO showCustomButtons(String[] params) {
@@ -2165,9 +2151,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             case MSG_SET_OVERLOOK_ENABLE:
                 setOverlookEnableMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
-            case MSG_ADD_MARKERS_OVERLAY:
-                addMarkersOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
             case MSG_SET_MARKER_OVERLAY:
                 setMarkerOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
@@ -2179,21 +2162,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 break;
             case MSG_ADD_DOT_OVERLAY:
                 addDotOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_ADD_POLYLINE_OVERLAY:
-                addPolylineOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_ADD_ARC_OVERLAY:
-                addArcOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_ADD_CIRCLE_OVERLAY:
-                addCircleOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_ADD_POLYGON_OVERLAY:
-                addPolygonOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_ADD_GROUND_OVERLAY:
-                addGroundOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
             case MSG_ADD_TEXT_OVERLAY:
                 addTextOverlayMsg(bundle.getStringArray(BUNDLE_DATA));

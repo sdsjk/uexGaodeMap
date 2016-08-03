@@ -51,10 +51,11 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
         this.mHandler = new BaseHandler(Looper.getMainLooper());
     }
 
-    public void addMarkers(List<MarkerBean> list){
+    public List<String> addMarkers(List<MarkerBean> list){
         if (list == null || list.size() < 1){
-            return;
+            return null;
         }
+        List<String> ids = new ArrayList<String>();
         for (int i = 0; i < list.size(); i++) {
             final MarkerBean bean = list.get(i);
             final MarkerOptions option = new MarkerOptions();
@@ -93,7 +94,9 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
             }else{
                 addMark(bean.getId(), option);
             }
+            ids.add(bean.getId());
         }
+        return ids;
     }
 
     public class BaseHandler extends Handler {

@@ -114,10 +114,12 @@
      uexGaodeMap.hideBubble();
  }
 
+ var marker1;
+
  function addMakersOverLayer() {
      var param = [
                   {
-                  id:"10002",
+                  //id:"10002",
                   longitude:114.402965,
                   latitude:30.475845,
                   icon:"res://mark.png",
@@ -128,7 +130,7 @@
                   //}
                   },
                   {
-                  id:10001,
+                  //id:10001,
                   longitude:114.409308,
                   latitude:30.476229,
                   //icon:"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png",
@@ -157,23 +159,26 @@
                   }
                   ];
                   var data = JSON.stringify(param);
-                  uexGaodeMap.addMarkersOverlay(data);
+                  var markers = uexGaodeMap.addMarkersOverlay(data);
+                  console.log("markers:" + markers);
+                  marker1 = markers[0];
  }
 
  function setMakerOverLayer() {
      var makerInfo = {
-         id:10002,
+         //id:10002,
          bubble:{
              title:"change-title",
              subTitle:"change-subTitle"
          }
      };
      var data = JSON.stringify(makerInfo);
-     uexGaodeMap.setMarkerOverlay(data);
+     var result = uexGaodeMap.updateMarkerOverLay(marker1, data);
+  //   console.log('result:' + result);
  }
  function addMultiOverLayer(){
      var jsonstr = {
-         id:"152",
+         //id:"152",
          fillColor:"#990033",
          strokeColor:"#990033",
          lineWidth:"2.0",
@@ -184,7 +189,8 @@
                    {longitude:"117",latitude:"39"}
                    ]
      };
-     uexGaodeMap.addPolygonOverLayer(jsonstr);
+     var polygonOverLayer = uexGaodeMap.addPolygonOverLayer(jsonstr);
+     console.log("polygonOverLayer:" + polygonOverLayer);
  }
 
  function addDot() {
@@ -200,7 +206,7 @@
  }
  function addPolyline() {
      var jsonstr = {
-         id:"151",
+         //id:"151",
          fillColor:"#f00",
          lineWidth:"10.0",
          property:[
@@ -219,11 +225,12 @@
                    ]
      };
      var data = JSON.stringify(jsonstr);
-     uexGaodeMap.addPolylineOverlay(data);
+     var polylineOverlay = uexGaodeMap.addPolylineOverlay(data);
+     console.log("addPolylineOverlay:" + polylineOverlay);
  }
  function addArc() {
      var jsonstr = {
-         id:"152",
+         //id:"152",
          strokeColor:"#f00",
          lineWidth:"12.0",
          start:{
@@ -240,11 +247,13 @@
          }
      };
      var data = JSON.stringify(jsonstr);
-     uexGaodeMap.addArcOverlay(data);
+     var result = uexGaodeMap.addArcOverlay(data);
+     console.log("addArcOverlay:" + result);
+
  }
  function addCircle() {
      var jsonstr = {
-         id:"153",
+         //id:"153",
          longitude:"114.402965",
          latitude:"30.375845",
          radius:"1000",
@@ -253,11 +262,12 @@
          lineWidth:"4"
      };
      var data = JSON.stringify(jsonstr);
-     uexGaodeMap.addCircleOverlay(data);
+     var result = uexGaodeMap.addCircleOverlay(data);
+     console.log("addCircleOverlay:" + result);
  }
  function addPolygon() {
      var jsonstr = {
-         id:"154",
+        // id:"154",
          fillColor:"#990033",
          strokeColor:"#990033",
          lineWidth:"2.0",
@@ -281,11 +291,12 @@
                    ]
      };
      var data = JSON.stringify(jsonstr);
-     uexGaodeMap.addPolygonOverlay(data);
+     var result = uexGaodeMap.addPolygonOverlay(data);
+     console.log("addPolygon:" + result);
  }
  function addGround() {
      var jsonstr = {
-         id:"155",
+         //id:"155",
          imageUrl:"http://img0.bdstatic.com/img/image/9baf75d938553886ce515def29441ed31409109131.jpg",
          transparency:"0.5",
          property:[
@@ -300,7 +311,8 @@
                    ]
      };
      var data = JSON.stringify(jsonstr);
-     uexGaodeMap.addGroundOverlay(data);
+     var result = uexGaodeMap.addGroundOverlay(data);
+     console.log("addGroundOverlay:" + result);
  }
  function clearOver(type){
      var idarr = [{
