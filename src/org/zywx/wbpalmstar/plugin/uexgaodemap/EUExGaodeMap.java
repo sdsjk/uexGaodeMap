@@ -40,6 +40,7 @@ import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableCityVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableProvinceVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonDisplayResultVO;
@@ -714,20 +715,19 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         }
     }
 
-    public void updateMarkerOverLay(String [] params) {
-        if (params == null || params.length < 2) {
-            errorCallback(0, 0, "error params!");
-            return;
-        }
-        String id = params[0];
-        String json = params[1];
-        MarkerBean bean = GaodeUtils.getMarkerData(mBrwView, id, json);
-        if (getAMapActivity() != null){
-            getAMapActivity().updateMarkersOverlay(bean);
-        }
+//    public void updateMarkerOverLay(String [] params) {
+//        if (params == null || params.length < 2) {
+//            errorCallback(0, 0, "error params!");
+//            return;
+//        }
+//        String id = params[0];
+//        String json = params[1];
+//        MarkerBean bean = GaodeUtils.getMarkerData(mBrwView, id, json);
+//        if (getAMapActivity() != null){
+//            getAMapActivity().updateMarkersOverlay(bean);
+//        }
+//    }
 
-
-    }
     public void showBubble(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
@@ -1905,13 +1905,15 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         }
         String json = params[0];
         int callbackId=-1;
+        boolean flag = false;
         if (params.length>1){
             callbackId= Integer.parseInt(params[1]);
         }
+        String name = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
             final DownloadItemVO data = new DownloadItemVO();
-            String name = null;
+
             if (jsonObject.has(JsConst.TAG_CITY)){
                 if (!TextUtils.isEmpty(jsonObject.getString(JsConst.TAG_CITY))){
                     name = jsonObject.getString(JsConst.TAG_CITY);
@@ -1927,7 +1929,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             if (!TextUtils.isEmpty(name)){
                 data.setName(name);
                 data.setStatus(OfflineMapStatus.CHECKUPDATES);
-                return GaodeMapOfflineManager.getInstance(mContext, EUExGaodeMap.this).
+                flag = GaodeMapOfflineManager.getInstance(mContext, EUExGaodeMap.this).
                                 isUpdate(data, callbackId);
              }else{
                 errorCallback(0, 0, "error params!");
@@ -1936,7 +1938,17 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
             errorCallback(0, 0, "error params!");
         }
-        return false;
+        if (!flag) { // 如果有更新会执行cbIsUpdate回调，此处针对没有更新添加一个回调
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("name", name);
+                jsonObject.put("result", 1);
+                callbackToJs(callbackId, false, EUExCallback.F_C_SUCCESS, jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag;
     }
 
     public void delete(String[] params) {
@@ -2351,7 +2363,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             resultStr=json.toString();
         }
         if (callbackId!=-1) {
-            callbackToJs(callbackId,false,json);
+            callbackToJs(callbackId, false, EUExCallback.F_C_SUCCESS, json);
         }else{
             callBackPluginJs(JsConst.CALLBACK_GET_CURRENT_LOCATION, resultStr);
         }
@@ -2378,7 +2390,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             }
         }
         if (callbackId!=-1){
-            callbackToJs(callbackId,false,jsonResult);
+            callbackToJs(callbackId, false, EUExCallback.F_C_SUCCESS, jsonResult);
         }else{
             callBackPluginJs(JsConst.CALLBACK_GEOCODE, jsonResult.toString());
         }
@@ -2398,7 +2410,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             e.printStackTrace();
         }
         if (callbackId!=-1){
-            callbackToJs(callbackId,false,jsonResult);
+            callbackToJs(callbackId, false, EUExCallback.F_C_SUCCESS, jsonResult);
         }else{
             callBackPluginJs(JsConst.CALLBACK_REVERSE_GEOCODE, jsonResult.toString());
         }
@@ -2418,7 +2430,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             resultVO.setData(list);
         }
         if (callbackId!=-1){
-            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(resultVO));
+            callbackToJs(callbackId, false, EUExCallback.F_C_SUCCESS, DataHelper.gson.toJsonTree(resultVO));
         }else{
             callBackPluginJs(JsConst.CALLBACK_POI_SEARCH, DataHelper.gson.toJson(resultVO));
         }
@@ -2427,7 +2439,12 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     public void cbDownload(DownloadResultVO data, int callbackId, boolean isLast) {
         if(callbackId!=-1){
-            callbackToJs(callbackId,!isLast,DataHelper.gson.toJsonTree(data));
+            //如果出错
+            if (data.getErrorCode() == JsConst.ERROR_IS_EXIST) {
+                callbackToJs(callbackId,!isLast, EUExCallback.F_C_FAILED, data.getErrorStr());
+            } else {
+                callbackToJs(callbackId,!isLast, EUExCallback.F_C_SUCCESS, DataHelper.gson.toJsonTree(data));
+            }
         }else{
             String jsonResult = DataHelper.gson.toJson(data);
             callBackPluginJs(JsConst.CALLBACK_DOWNLOAD, jsonResult);
@@ -2443,7 +2460,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     public void cbDelete(DownloadResultVO data, int callbackId, boolean isLast) {
         if(callbackId!=-1){
-            callbackToJs(callbackId,!isLast,DataHelper.gson.toJsonTree(data));
+            callbackToJs(callbackId,!isLast,EUExCallback.F_C_SUCCESS, DataHelper.gson.toJsonTree(data));
         }else{
             String jsonResult = DataHelper.gson.toJson(data);
             callBackPluginJs(JsConst.CALLBACK_DELETE, jsonResult);
@@ -2453,7 +2470,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     public void cbGetDownloadingList(List<DownloadItemVO> data, int callbackId) {
         if(callbackId!=-1){
-            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+            callbackToJs(callbackId,false, EUExCallback.F_C_SUCCESS, DataHelper.gson.toJsonTree(data));
         }else{
             String jsonResult = DataHelper.gson.toJson(data);
             callBackPluginJs(JsConst.CALLBACK_GET_DOWNLOADING_LIST, jsonResult);
@@ -2463,7 +2480,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     public void cbGetDownloadList(List<DownloadItemVO> data, int callbackId) {
         if(callbackId!=-1){
-            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+            callbackToJs(callbackId,false, EUExCallback.F_C_SUCCESS, DataHelper.gson.toJsonTree(data));
         }else{
             String jsonResult = DataHelper.gson.toJson(data);
             callBackPluginJs(JsConst.CALLBACK_GET_DOWNLOAD_LIST, jsonResult);
@@ -2473,7 +2490,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     public void cbGetAvailableCityList(List<AvailableCityVO> data, int callbackId) {
         if(callbackId!=-1){
-            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+            callbackToJs(callbackId,false, EUExCallback.F_C_SUCCESS, DataHelper.gson.toJsonTree(data));
         }else{
             String jsonResult = DataHelper.gson.toJson(data);
             callBackPluginJs(JsConst.CALLBACK_GET_AVAILABLE_CITY_LIST, jsonResult);
@@ -2483,7 +2500,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     public void cbGetAvailableProvinceList(List<AvailableProvinceVO> data, int callbackId) {
         if(callbackId!=-1){
-            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+            callbackToJs(callbackId,false, EUExCallback.F_C_SUCCESS, DataHelper.gson.toJsonTree(data));
         }else{
             String jsonResult = DataHelper.gson.toJson(data);
             callBackPluginJs(JsConst.CALLBACK_GET_AVAILABLE_PROVINCE_LIST, jsonResult);
@@ -2493,7 +2510,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     public void cbIsUpdate(UpdateResultVO data, int callbackId) {
         if(callbackId!=-1){
-            callbackToJs(callbackId,false,DataHelper.gson.toJsonTree(data));
+            callbackToJs(callbackId,false, EUExCallback.F_C_SUCCESS, DataHelper.gson.toJsonTree(data));
         }else{
             String jsonResult = DataHelper.gson.toJson(data);
             callBackPluginJs(JsConst.CALLBACK_IS_UPDATE, jsonResult);

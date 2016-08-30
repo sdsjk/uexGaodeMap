@@ -20,9 +20,6 @@
         <method name="setOverlookEnable" />
         <method name="addMarkersOverlay" />
         <method name="setMarkerOverlay" />
-        <!--4.0接口-->
-        <method name="updateMarkerOverLay" />
-
         <method name="showBubble" />
         <method name="hideBubble" />
         <method name="addPolylineOverlay" />

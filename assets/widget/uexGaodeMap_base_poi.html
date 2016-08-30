@@ -128,9 +128,12 @@
                     }*/
                 };
                 var data = JSON.stringify(jsonstr);
-                uexGaodeMap.poiSearch(data,function(data){
-                                      alert("callback:"+JSON.stringify(data));
-                                      });
+                uexGaodeMap.poiSearch(data,function(error, data){
+                    if (error) {
+                        alert("callback:"+JSON.stringify(data));
+                    }
+
+                });
             }
 
 

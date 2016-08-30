@@ -9,7 +9,7 @@
     <application
         android:name="org.zywx.wbpalmstar.widgetone.WidgetOneApplication"
         android:allowClearUserData="false"
-        android:hardwareAccelerated="false"
+        android:hardwareAccelerated="true"
         tools:replace="android:hardwareAccelerated"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
