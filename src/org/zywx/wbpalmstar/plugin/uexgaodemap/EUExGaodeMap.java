@@ -30,12 +30,7 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
-import com.amap.api.services.poisearch.Cinema;
-import com.amap.api.services.poisearch.Dining;
-import com.amap.api.services.poisearch.Hotel;
-import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
-import com.amap.api.services.poisearch.Scenic;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -2596,55 +2591,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             resultVO.setData(list);
         }
         callBackPluginJs(JsConst.CALLBACK_POI_SEARCH, DataHelper.gson.toJson(resultVO));
-    }
-
-    @Override
-    public void cbPoiSearchDetail(PoiItemDetail result, int errorCode) {
-        ResultVO resultVO = null;
-        PoiItemDetail.DeepType type = result.getDeepType();
-        if (type != null){
-            switch (type){
-                case DINING://餐饮深度信息类型；
-                    resultVO = new ResultVO<Dining>();
-                    resultVO.setData(result.getDining());
-                    break;
-                case HOTEL://酒店深度信息类型；
-                    resultVO = new ResultVO<Hotel>();
-                    resultVO.setData(result.getHotel());
-                    break;
-                case CINEMA://影院深度信息类型；
-                    resultVO = new ResultVO<Cinema>();
-                    resultVO.setData(result.getCinema());
-                    break;
-                case SCENIC://景点深度信息类型。
-                    resultVO = new ResultVO<Scenic>();
-                    resultVO.setData(result.getScenic());
-                    break;
-                case UNKNOWN://未知深度信息类型；
-                    break;
-            }
-            if (resultVO != null){
-                resultVO.setType(type+"");
-            }
-        }else if ((result.getGroupbuys() != null && result.getGroupbuys().size() > 0)
-                || (result.getDiscounts() != null && result.getDiscounts().size() > 0)){
-            resultVO = new ResultVO();
-            if (result.getDiscounts() != null
-                    && result.getDiscounts().size() > 0){
-                resultVO.setDiscount(result.getDiscounts());
-            }
-            if (result.getGroupbuys() != null
-                    && result.getGroupbuys().size() > 0){
-                resultVO.setGroupbuy(result.getGroupbuys());
-            }
-        }else{
-            resultVO = new ResultVO<PoiItemDetail>();
-            resultVO.setData(result);
-        }
-        if (resultVO != null){
-            resultVO.setErrorCode(errorCode);
-            callBackPluginJs(JsConst.CALLBACK_POI_SEARCH_DETAIL, DataHelper.gson.toJson(resultVO));
-        }
     }
 
     @Override

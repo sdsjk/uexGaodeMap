@@ -4,7 +4,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.RegeocodeResult;
-import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
 
 import org.zywx.wbpalmstar.plugin.uexgaodemap.EUExGaodeMap;
@@ -31,7 +30,6 @@ public interface OnCallBackListener extends Serializable{
     public void cbGeocode(GeocodeResult geocodeResult, int errorCode);
     public void cbReverseGeocode(RegeocodeResult regeocodeResult, int errorCode);
     public void cbPoiSearch(PoiResult result, int errorCode);
-    public void cbPoiSearchDetail(PoiItemDetail result, int errorCode);
     public void cbDownload(DownloadResultVO data);
     public void onDownload(DownloadStatusVO data);
     public void cbDelete(DownloadResultVO data);

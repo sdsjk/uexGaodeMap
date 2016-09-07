@@ -14,9 +14,9 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.location.LocationManagerProxy;
-import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMap.OnMapLoadedListener;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -33,11 +33,11 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
-import com.amap.api.services.poisearch.PoiItemDetail;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.amap.api.services.poisearch.PoiSearch.Query;
 
+import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.view.BaseFragment;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
@@ -76,7 +76,8 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
     private double[] mCenter = null;
     private GaodeMapMarkerMgr markerMgr;
     private GaodeMapOverlayMgr overlayMgr;
-    private LocationManagerProxy mLocationMgr;
+    private AMapLocationClientOption mLocationOption;
+    private AMapLocationClient mLocationClient;
     private OnLocationChangedListener mLocationChangedListener;
     private GaodeLocationListener mLocationListener;
     private GeocodeSearch geocodeSearch;
@@ -404,15 +405,29 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
     }
 
     public void getCurrentLocation(){
-        if (mLocationMgr == null){
-            mLocationMgr = LocationManagerProxy.getInstance(this.getActivity());
+        if (mLocationClient == null) {
+            mLocationClient=new AMapLocationClient(this.getActivity());
         }
         if (mLocationListener == null){
             mLocationListener = new GaodeLocationListener();
         }
-        mLocationListener.setType(JsConst.GET_LOCATION);
-        mLocationMgr.requestLocationData(LocationProviderProxy.AMapNetwork,
-                -1, 0, mLocationListener);
+        GaodeLocationListener locationListener = new GaodeLocationListener();
+        locationListener.setType(JsConst.GET_LOCATION);
+        mLocationClient.setLocationListener(locationListener);
+        //初始化定位参数
+        mLocationOption = new AMapLocationClientOption();
+        //设置定位监听
+        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        mLocationOption.setOnceLocation(true);
+        //设置定位参数
+        mLocationClient.setLocationOption(mLocationOption);
+        // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
+        // 注意设置合适的定位时间的间隔（最小间隔支持为2000ms），并且在合适时间调用stopLocation()方法来取消定位请求
+        // 在定位结束后，在合适的生命周期调用onDestroy()方法
+        // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
+        //启动定位
+        mLocationClient.startLocation();
     }
 
     @Override
@@ -625,8 +640,7 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
         public void onLocationChanged(AMapLocation aMapLocation) {
             Log.i(TAG, "onLocationChanged");
             try {
-                if (aMapLocation != null && aMapLocation.getAMapException()!= null
-                && aMapLocation.getAMapException().getErrorCode() == 0){
+
                     switch (type){
                         case JsConst.SHOW_LOCATION:
                         case JsConst.CONTINUED:
@@ -643,72 +657,66 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
                             }
                             break;
                     }
-                }
             } catch (Exception e) {
                 //e.printStackTrace();
             }
         }
-
-        @Override
-        public void onLocationChanged(Location location) {
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
     }
 
     public void startLocation(long minTime, float minDistance){
-        if (mLocationMgr == null) {
-            mLocationMgr = LocationManagerProxy.getInstance(this.getActivity());
-        }
-        if (mLocationListener == null){
+        if (mLocationListener == null) {
             mLocationListener = new GaodeLocationListener();
         }
         mLocationListener.setType(JsConst.CONTINUED);
-		/*
-		 * 第一个参数是定位provider，第二个参数时间最短是2000毫秒，第三个参数距离间隔单位是米，第四个参数是定位监听者
-		 */
-        mLocationMgr.requestLocationData(LocationProviderProxy.AMapNetwork,
-                minTime, minDistance, mLocationListener);
+        if (mLocationClient==null){
+            mLocationClient=new AMapLocationClient(getActivity());
+        }
+
+        mLocationClient.setLocationListener(mLocationListener);
+        //初始化定位参数
+        mLocationOption = new AMapLocationClientOption();
+        //设置定位监听
+        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //设置定位间隔,单位毫秒,默认为2000ms
+        if (minTime!=0) {
+            mLocationOption.setInterval(minTime);
+        }
+        //设置定位参数
+        mLocationClient.setLocationOption(mLocationOption);
+        // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
+        // 注意设置合适的定位时间的间隔（最小间隔支持为2000ms），并且在合适时间调用stopLocation()方法来取消定位请求
+        // 在定位结束后，在合适的生命周期调用onDestroy()方法
+        // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
+        //启动定位
+        mLocationClient.startLocation();
     }
 
     public void stopLocation(){
-        if (mLocationMgr != null){
-            if (mLocationListener != null){
-                mLocationMgr.removeUpdates(mLocationListener);
+        if (mLocationClient != null) {
+            if (mLocationListener != null) {
+                mLocationClient.setLocationListener(null);
             }
-            mLocationMgr.destroy();
+            mLocationClient.stopLocation();
         }
-        mLocationMgr = null;
+        mLocationClient = null;
     }
 
     public void setMyLocationEnable(int type) {
         Log.i(TAG, "setMyLocationEnable-type = " + type);
-        if (aMap != null){
+        if (aMap != null) {
             aMap.setMyLocationEnabled(type == JsConst.ENABLE);
-            if (type == JsConst.ENABLE){
-                if (mLocationListener == null){
+            if (type == JsConst.ENABLE) {
+                if (mLocationListener == null) {
                     mLocationListener = new GaodeLocationListener();
                 }
-                if (mLocationListener.getType() != JsConst.CONTINUED){
-                    if (mLocationMgr == null)
-                        mLocationMgr = LocationManagerProxy.getInstance(this.getActivity());
+                if (mLocationListener.getType() != JsConst.CONTINUED) {
+                    if (mLocationClient == null) {
+                        mLocationClient = new AMapLocationClient(this.getActivity());
+                    }
                     mLocationListener.setType(JsConst.SHOW_LOCATION);
-                    mLocationMgr.requestLocationData(LocationProviderProxy.AMapNetwork,
-                            -1, 0, mLocationListener);
+                    mLocationClient.setLocationListener(mLocationListener);
+                    mLocationClient.startLocation();
                 }
             }
         }
@@ -781,8 +789,8 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
             Query query = new Query(bean.getSearchKey(), bean.getPoiTypeSet(), bean.getCity());
             query.setPageNum(bean.getPageNumber());
             query.setPageSize(bean.getPageSize());
-            query.setLimitDiscount(bean.isShowDiscount());
-            query.setLimitGroupbuy(bean.isShowGroupbuy());
+//            query.setLimitDiscount(bean.isShowDiscount());
+//            query.setLimitGroupbuy(bean.isShowGroupbuy());
             PoiSearch search = new PoiSearch(this.getActivity(), query);
             if (bean.getSearchBound() != null){
                 PoiSearch.SearchBound bound = null;
@@ -808,9 +816,10 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
     }
 
     public void poiSearchDetail(String poiId){
-        PoiSearch search = new PoiSearch(this.getActivity(), null);
-        search.setOnPoiSearchListener(onPoiSearchListener);
-        search.searchPOIDetailAsyn(poiId);
+//        PoiSearch search = new PoiSearch(this.getActivity(), null);
+//        search.setOnPoiSearchListener(onPoiSearchListener);
+//        search.searchPOIDetailAsyn(poiId);
+        BDebug.e("method removed...");
     }
 
     PoiSearch.OnPoiSearchListener onPoiSearchListener = new PoiSearch.OnPoiSearchListener() {
@@ -835,10 +844,9 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
         }
 
         @Override
-        public void onPoiItemDetailSearched(PoiItemDetail poiItemDetail, int errorCode) {
-            if (errorCode == 0 && poiItemDetail != null && mListener != null){
-                mListener.cbPoiSearchDetail(poiItemDetail, errorCode);
-            }
+        public void onPoiItemSearched(PoiItem poiItem, int i) {
+
         }
+
     };
 }

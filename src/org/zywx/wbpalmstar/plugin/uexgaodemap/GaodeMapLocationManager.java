@@ -1,7 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexgaodemap;
 
-import android.location.Location;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -42,7 +40,7 @@ public class GaodeMapLocationManager implements LocationSource{
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {
             Log.i(TAG, "onLocationChanged");
-            if (aMapLocation != null && aMapLocation.getAMapException().getErrorCode() == 0){
+            if (aMapLocation != null && aMapLocation.getErrorCode() == 0){
                 switch (type){
                     case JsConst.SHOW_LOCATION:
                     case JsConst.CONTINUED:
@@ -60,26 +58,6 @@ public class GaodeMapLocationManager implements LocationSource{
                         break;
                 }
             }
-        }
-
-        @Override
-        public void onLocationChanged(Location location) {
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
         }
     }
 }

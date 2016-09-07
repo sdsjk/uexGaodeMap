@@ -12,6 +12,7 @@ import com.amap.api.maps.offlinemap.OfflineMapManager;
 import com.amap.api.maps.offlinemap.OfflineMapProvince;
 import com.amap.api.maps.offlinemap.OfflineMapStatus;
 
+import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableCityVO;
@@ -24,6 +25,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.SharedPreferencesUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownloadListener{
@@ -38,6 +40,9 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
     private boolean isDownloading = false;
     private DownloadHandler mHandler;
     private String mDownloadingName = "";
+
+    private HashMap<String,Integer> mUpdateCallbackMap=new HashMap<String,Integer>();
+    //为了兼容cb回调,记录检查更新与回调的对应关系,同一个城市不能同时检查两次。
 
     public static GaodeMapOfflineManager getInstance(Context context, OnCallBackListener listener){
         if (object == null){
@@ -98,7 +103,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         if(isDownloading(downloadVO.getName()) && !isDownloadingError(downloadVO.getName())){
             data.setErrorCode(JsConst.ERROR_IS_EXIST);
             data.setErrorStr(EUExUtil.getString("plugin_uexgaodemap_is_exist"));
-        }else if(isDownload(downloadVO.getName()) && !isNeedUpdate(downloadVO)){
+        }else if(isDownload(downloadVO.getName())){
             data.setErrorCode(JsConst.ERROR_IS_DOWNLOAD);
             data.setErrorStr(EUExUtil.getString("plugin_uexgaodemap_is_download"));
         }else if(!isValidCityName(downloadVO.getName())){
@@ -172,6 +177,11 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         }
     }
 
+    @Override
+    public void onRemove(boolean success, String name, String describe) {
+
+    }
+
     public void deleteList(List<String> list) {
         if (offlineMapManager == null){
             offlineMapManager = new OfflineMapManager(mContext, this);
@@ -193,7 +203,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
             }
             list = allList;
         }
-        if (list != null && list.size() > 0){
+        if (list.size() > 0){
             for (int i = 0; i < list.size(); i++){
                 delete(list.get(i));
             }
@@ -384,11 +394,12 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         }).start();
     }
 
-    public void getDownloadList() {
+    public List<DownloadItemVO> getDownloadList() {
         List<DownloadItemVO> list = getDownload();
         if (mListener != null){
             mListener.cbGetDownloadList(list);
         }
+        return list;
     }
 
     private List<DownloadItemVO> getDownload(){
@@ -408,7 +419,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         return  resultList;
     }
 
-    public void getDownloadingList() {
+    public List<DownloadItemVO> getDownloadingList() {
         List<DownloadItemVO> list = getDownloading();
         if (mListener != null){
             mListener.cbGetDownloadingList(list);
@@ -416,6 +427,7 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         if (!isDownloading){
             sendStartDownloadMsg();
         }
+        return list;
     }
 
     private List<DownloadItemVO> getDownloading(){
@@ -459,37 +471,31 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         return result;
     }
 
-    public void isUpdate(DownloadItemVO data) {
-        boolean isUpdate = isNeedUpdate(data);
-        UpdateResultVO resultVO = new UpdateResultVO(data.getName(), isUpdate ? 0:1);
+    public boolean isUpdate(DownloadItemVO data) {
+        isNeedUpdate(data);
+        return true;
+    }
+
+    @Override
+    public void onCheckUpdate(boolean hasNew, String name) {
+        BDebug.i("onCheckUpdate:",name,hasNew);
+        UpdateResultVO resultVO = new UpdateResultVO(name, hasNew ? 0:1);
         if (mListener != null){
             mListener.cbIsUpdate(resultVO);
         }
-
     }
 
-    private boolean isNeedUpdate(DownloadItemVO data){
+    private void isNeedUpdate(DownloadItemVO data){
         if (offlineMapManager == null){
             offlineMapManager = new OfflineMapManager(mContext, this);
         }
-        boolean isUpdate;
         try {
-            switch (data.getType()){
-                case JsConst.TYPE_CITY:
-                    isUpdate = offlineMapManager.updateOfflineCityByName(data.getName());
-                    break;
-                case JsConst.TYPE_PROVINCE:
-                    isUpdate = offlineMapManager.updateOfflineMapProvinceByName(data.getName());
-                    break;
-                default:
-                    isUpdate = false;
-                    break;
-            }
+            offlineMapManager.updateOfflineCityByName(data.getName());
         } catch (AMapException e) {
-            isUpdate = false;
-            e.printStackTrace();
+            if (BDebug.DEBUG) {
+                e.printStackTrace();
+            }
         }
-        return isUpdate;
     }
 
     public void restart(List<String> list) {
@@ -579,10 +585,10 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
         try {
             switch (downloadVO.getType()){
                 case JsConst.TYPE_CITY:
-                    isStart = offlineMapManager.downloadByCityName(downloadVO.getName());
+                    offlineMapManager.downloadByCityName(downloadVO.getName());
                     break;
                 case JsConst.TYPE_PROVINCE:
-                    isStart = offlineMapManager.downloadByProvinceName(downloadVO.getName());
+                    offlineMapManager.downloadByProvinceName(downloadVO.getName());
                     break;
                 default:
                     isStart = false;
@@ -592,12 +598,8 @@ public class GaodeMapOfflineManager implements OfflineMapManager.OfflineMapDownl
             isStart = false;
             e.printStackTrace();
         }
-        if (isStart){
-            isDownloading = true;
-            mDownloadingName = downloadVO.getName();
-        }else{
-            isDownloading = false;
-        }
+        isDownloading = true;
+        mDownloadingName = downloadVO.getName();
     }
 
     private void sendStartDownloadMsg(){
