@@ -60,5 +60,7 @@
         <method name="deleteCustomButton"/>
         <method name="showCustomButtons"/>
         <method name="hideCustomButtons"/>
+        <method name="addMultiInfoWindow"/>
+
     </plugin>
 </uexplugins>
