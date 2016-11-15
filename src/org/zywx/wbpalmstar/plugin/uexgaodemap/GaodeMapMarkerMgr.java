@@ -9,6 +9,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMap.InfoWindowAdapter;
@@ -23,8 +24,11 @@ import com.amap.api.maps.model.MarkerOptions;
 import org.zywx.wbpalmstar.base.cache.ImageLoadTask;
 import org.zywx.wbpalmstar.base.cache.ImageLoadTask$ImageLoadTaskCallback;
 import org.zywx.wbpalmstar.base.cache.ImageLoaderManager;
+import org.zywx.wbpalmstar.engine.EBrowserActivity;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.BubbleLayoutBaseVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomBubbleVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.InfoWindowMarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bubblelayout.CustomBubbleMarkerLayout;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
@@ -100,6 +104,35 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
             }
         }
     }
+    public void addMultiInfoWindow(List<InfoWindowMarkerBean> list){
+        if (list == null || list.size() < 1){
+            return;
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            final InfoWindowMarkerBean bean = list.get(i);
+            MarkerOptions option = new MarkerOptions();
+            option.position(bean.getPosition());
+
+            View view = ((EBrowserActivity)mContext).getLayoutInflater().inflate(EUExUtil.getResLayoutID("plugin_uexgaodemap_info_window"), null);
+            TextView tvTitle = (TextView) view.findViewById(EUExUtil.getResIdID("plugin_uexgaodemap_info_window_title"));
+            TextView tvSubTitle= (TextView) view.findViewById(EUExUtil.getResIdID("plugin_uexgaodemap_info_window_subTitle"));
+            tvTitle.setText(bean.getTitle());
+            tvTitle.setTextColor(bean.getTitleColor());
+            tvTitle.setTextSize(bean.getTitleSize());
+            if (!TextUtils.isEmpty(bean.getSubTitle())) {
+                tvSubTitle.setText(bean.getSubTitle());
+                tvSubTitle.setTextColor(bean.getSubTitleColor());
+                tvSubTitle.setTextSize(bean.getSubTitleSize());
+                tvSubTitle.setVisibility(View.VISIBLE);
+            }
+
+            BitmapDescriptor descriptor = BitmapDescriptorFactory.fromView(view);
+            option.icon(descriptor);
+            addMark(bean.getId(), option);
+        }
+    }
+
 
     public class BaseHandler extends Handler {
 

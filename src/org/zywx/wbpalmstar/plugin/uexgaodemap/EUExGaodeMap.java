@@ -56,6 +56,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.BoundBaseBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBoundBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.GroundBean;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.InfoWindowMarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBoundBean;
@@ -145,6 +146,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private static final int MSG_REMOVE_CUSTOM_BUTTON = 69;
     private static final int MSG_SHOW_CUSTOM_BUTTONS = 70;
     private static final int MSG_HIDE_CUSTOM_BUTTONS = 71;
+    private static final int MSG_ADD_MULTI_INFO_WINDOW = 72;
 
 
     private boolean isScrollWithWeb = false;
@@ -697,6 +699,28 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         List<MarkerBean> list = GaodeUtils.getAddMarkersData(mBrwView, json);
         if (getAMapActivity() != null){
             getAMapActivity().addMarkersOverlay(list);
+        }
+    }
+    public void addMultiInfoWindow(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        Message msg = new Message();
+        msg.obj = this;
+        msg.what = MSG_ADD_MULTI_INFO_WINDOW;
+        Bundle bd = new Bundle();
+        bd.putStringArray(BUNDLE_DATA, params);
+        msg.setData(bd);
+        mHandler.sendMessage(msg);
+    }
+
+
+    private void addMultiInfoWindowMsg(String[] params) {
+        String json = params[0];
+        List<InfoWindowMarkerBean> list = GaodeUtils.getInfoWindowMarkersData(mBrwView, json);
+        if (getAMapActivity() != null){
+            getAMapActivity().addMultiInfoWindow(list);
         }
     }
 
@@ -2284,6 +2308,9 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 break;
             case MSG_ADD_MARKERS_OVERLAY:
                 addMarkersOverlayMsg(bundle.getStringArray(BUNDLE_DATA));
+                break;
+            case MSG_ADD_MULTI_INFO_WINDOW:
+                addMultiInfoWindowMsg(bundle.getStringArray(BUNDLE_DATA));
                 break;
             case MSG_SET_MARKER_OVERLAY:
                 setMarkerOverlayMsg(bundle.getStringArray(BUNDLE_DATA));

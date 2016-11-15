@@ -52,6 +52,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBoundBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CustomButtonBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.GroundBean;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.InfoWindowMarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBoundBean;
@@ -350,6 +351,12 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
             return;
         }
         markerMgr.addMarkers(list);
+    }
+    public void addMultiInfoWindow(List<InfoWindowMarkerBean> list){
+        if (markerMgr==null){
+            return;
+        }
+        markerMgr.addMultiInfoWindow(list);
     }
 
     public void updateMarkersOverlay(MarkerBean bean){

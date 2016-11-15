@@ -36,6 +36,10 @@ public class JsConst {
     public static final String OFFSETY = "offsetY";
     public static final String BUBBLE = "bubble";
     public static final String BGIMG = "bgImg";
+    public static final String TITLE_SIZE = "titleSize";
+    public static final String SUBTITLE_SIZE = "subTitleSize";
+    public static final String TITLE_COLOR = "titleColor";
+    public static final String SUBTITLE_COLOR = "subTitleColor";
 
     public static final String IS_SCROLL_WITH_WEB = "isScrollWithWeb";
 
