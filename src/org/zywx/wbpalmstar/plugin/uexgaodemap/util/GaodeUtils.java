@@ -1,6 +1,7 @@
 package org.zywx.wbpalmstar.plugin.uexgaodemap.util;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Environment;
 import android.text.TextUtils;
 
@@ -14,6 +15,7 @@ import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.JsConst;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomBubbleVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.InfoWindowMarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 
 import java.io.File;
@@ -158,6 +160,58 @@ public class GaodeUtils {
         return bean;
     }
 
+    public static List<InfoWindowMarkerBean> getInfoWindowMarkersData(EBrowserView eBrowserView, String json) {
+        List<InfoWindowMarkerBean> list = new ArrayList<InfoWindowMarkerBean>();
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for (int i = 0; i < jsonArray.length(); i++){
+                InfoWindowMarkerBean bean = getInfoWindowMarker(eBrowserView, jsonArray.getString(i));
+                if (bean != null && bean.getPosition() != null){
+                    list.add(bean);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return list;
+    }
+
+    public static InfoWindowMarkerBean getInfoWindowMarker(EBrowserView ebrw, String json) {
+        InfoWindowMarkerBean bean = new InfoWindowMarkerBean();
+        try {
+            JSONObject object = new JSONObject(json);
+            String id = object.getString(JsConst.ID);
+            bean.setId(id);
+            if (object.has(JsConst.LONGITUDE) && object.has(JsConst.LATITUDE)){
+                float longitude = Float.valueOf(object.getString(JsConst.LONGITUDE));
+                float latitude = Float.valueOf(object.getString(JsConst.LATITUDE));
+                bean.setPosition(new LatLng(latitude, longitude));
+            }
+
+            String title = object.optString(JsConst.TITLE, null);
+            String subTitle = object.optString(JsConst.SUBTITLE, null);
+            int titleSize = object.optInt(JsConst.TITLE_SIZE, 16);
+            titleSize = px2dip(ebrw.getContext(), titleSize);
+
+            int subTitleSize = object.optInt(JsConst.SUBTITLE_SIZE, 14);
+            subTitleSize = px2dip(ebrw.getContext(), subTitleSize);
+
+            String titleColor = object.optString(JsConst.TITLE_COLOR, "#000000");
+            String subTitleColor = object.optString(JsConst.SUBTITLE_COLOR, "#000000");
+            bean.setTitle(title);
+            bean.setSubTitle(subTitle);
+            bean.setTitleSize(titleSize);
+            bean.setSubTitleSize(subTitleSize);
+            bean.setTitleColor(Color.parseColor(titleColor));
+            bean.setSubTitleColor(Color.parseColor(subTitleColor));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return bean;
+    }
 
     public static String getCacheDir() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {

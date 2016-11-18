@@ -5,9 +5,9 @@
 	<author email=""> </author>
 	<icon src="icon.png"/>
 	<license href=""/>
-	<content encoding="utf-8" src="index.html"/>
+	<content encoding="utf-8" src="uexGaodeMap_content.html"/>
 	<updateurl/>
-	<logserverip/> 
+	<logserverip/>
 	<showmyspace>false</showmyspace>
 	<obfuscation>false</obfuscation>
 	<bgcolor>#fefefe</bgcolor>
@@ -15,9 +15,9 @@
 	<debug enable="true"/>
 <partobfuscation>false</partobfuscation>
 <webapp/>
-<config desc="uexALiBaiChuan" type="URLSCHEME"> 
-    <urlScheme name="uexALiBaiChuan" schemes="['tbopen23368914']"/> 
-</config> 
+<config desc="uexALiBaiChuan" type="URLSCHEME">
+    <urlScheme name="uexALiBaiChuan" schemes="['tbopen23368914']"/>
+</config>
 <config desc="uexQQ" type="KEY">
     <param name="$UEXQQ_APPID$" platform="Android" value="tencent1104850791"/>
 </config>
@@ -34,9 +34,9 @@
         <param name="$uexBaiduMap_APIKey$" platform="iOS" value="61Mogm8Xi8N6Zobn56oOxPpi"/>
         <param name="$uexBaiduMap_APIKey$" platform="Android" value="32QLBlURKM1KqDfNN6XjihLA"/>
 </config>
-<config desc="uexGaode" type="KEY">     
-  <param name="$uexGaodeMap_APIKey$" platform="iOS" value="2fd635b317dbc43a9f622f84cc997e79"/>   
-  <param name="$uexGaodeMap_APIKey$" platform="Android" value="a02f99bf851818e16212b032cf03881c"/>  
+<config desc="uexGaode" type="KEY">
+  <param name="$uexGaodeMap_APIKey$" platform="iOS" value="2fd635b317dbc43a9f622f84cc997e79"/>
+  <param name="$uexGaodeMap_APIKey$" platform="Android" value="a02f99bf851818e16212b032cf03881c"/>
 </config>
 <config desc="whiteList" type="AUTHORITY">
     <permission info="urlSchemeWhiteList" platform="iOS">
@@ -48,7 +48,7 @@
     <string>sinaweibohdsso</string>
     <string>weibosdk</string>
     <string>weibosdk2.5</string>
-    <string>mqzoneopensdk</string> 
+    <string>mqzoneopensdk</string>
 	<string>mqzoneopensdkapi</string>
 	<string>mqzoneopensdkapi19</string>
 	<string>mqzoneopensdkapiV2</string>

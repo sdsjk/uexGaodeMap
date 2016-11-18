@@ -57,6 +57,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.BoundBaseBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBoundBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.GroundBean;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.InfoWindowMarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.PolygonBoundBean;
@@ -680,6 +681,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
     public List<String> addMarkersOverlay(String[] params) {
+
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
             return null;
@@ -692,6 +694,17 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         return null;
     }
 
+    public void addMultiInfoWindow(String[] params) {
+        if (params == null || params.length < 1) {
+            errorCallback(0, 0, "error params!");
+            return;
+        }
+        String json = params[0];
+        List<InfoWindowMarkerBean> list = GaodeUtils.getInfoWindowMarkersData(mBrwView, json);
+        if (getAMapActivity() != null){
+            getAMapActivity().addMultiInfoWindow(list);
+        }
+    }
 
     public void setMarkerOverlay(String[] params) {
         if (params == null || params.length < 1) {

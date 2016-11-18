@@ -79,6 +79,7 @@ android {
         signingConfig signingConfigs.config
         applicationId 'org.zywx.wbpalmstar.widgetone.uexgaodemap'
         minSdkVersion 14
+        multiDexEnabled true
 //        ndk {
 //            abiFilters "armeabi"
 //        }
