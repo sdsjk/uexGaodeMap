@@ -76,7 +76,7 @@
             }
 
             function getCurrentLocation(){
-                uexGaodeMap.getCurrentLocation(function(data){
+                uexGaodeMap.getCurrentLocation(function(error, data){
                     alert("callback:"+JSON.stringify(data));
                 });
             }
