@@ -233,10 +233,10 @@ public class GaodeUtils {
 
             String title = object.optString(JsConst.TITLE, null);
             String subTitle = object.optString(JsConst.SUBTITLE, null);
-            int titleSize = object.optInt(JsConst.TITLE_SIZE, 16);
+            int titleSize = object.optInt(JsConst.TITLE_SIZE, 32);
             titleSize = px2dip(ebrw.getContext(), titleSize);
 
-            int subTitleSize = object.optInt(JsConst.SUBTITLE_SIZE, 14);
+            int subTitleSize = object.optInt(JsConst.SUBTITLE_SIZE, 28);
             subTitleSize = px2dip(ebrw.getContext(), subTitleSize);
 
             String titleColor = object.optString(JsConst.TITLE_COLOR, "#000000");
