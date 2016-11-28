@@ -60,8 +60,8 @@
             
             function setCenter() {
                 var params = {
-                    longitude:114.402815,
-                    latitude:30.475798
+                    longitude:'150.402815',
+                    latitude:'30.475798'
                 };
                 var data = JSON.stringify(params);
                 uexGaodeMap.setCenter(data);
@@ -73,20 +73,14 @@
                  }
                 uexGaodeMap.onSDKReceiverError = function makerListner(json) {
                      alert("onSDKReceiverError: "+json);
-                }
-                uexGaodeMap.onMapClickListener = function(json){
-                     //alert("onMapClickListener:" + json);
-                }
-                uexGaodeMap.onMapLongClickListener = function(json){
+                 }
+                 uexGaodeMap.onMapClickListener = function(json){
+                     alert("onMapClickListener:" + json);
+                 }
+                 uexGaodeMap.onMapLongClickListener = function(json){
                      alert("onMapLongClickListener:" + json);
-                }
-                uexGaodeMap.onMapLoadedListener = onMapLoadedListener;
-                uexWindow.setReportKey(0,1);
-                uexWindow.onKeyPressed = function(keyCode){
-                    if(keyCode == 0){
-                        closeWin();
-                    }
-                }
+                 }
+                 uexGaodeMap.onMapLoadedListener = onMapLoadedListener;
              }
         function onMapLoadedListener(){
             uexWindow.toast(0,5,"地图加载完成",1000);
@@ -96,24 +90,21 @@
             }
             
             function openmap(){
+                
                 var divTop = document.getElementById("topDiv").offsetTop + document.getElementById("topDiv").offsetHeight + 60;
-                var w = screen.availWidth-20;
-                var h = screen.availHeight/2;
+                var w = screen.availWidth-100;
+                var h = screen.availHeight/3;
                 var params = {
                     left:10,
                     top:divTop,
                     width:w,
                     height:h,
-                    isScrollWithWeb:true,
-                    longitude:114.402815,
-                    latitude:30.475798
+                    longitude:'114.402815',
+                    latitude:'30.475798'
                 };
                 var data = JSON.stringify(params);
                 uexGaodeMap.open(data);
             }
-        function openPop(){
-            uexWindow.openPopover("pp",0,"index.html","",0,0,"","","",0);
-        }
     </script>
 </head>
 <body class="um-vp " ontouchstart>
@@ -141,11 +132,12 @@
         <input type="button" value="关闭实时交通图" onclick="closeTrafficEnabled();">
             <input type="button" value="设置中心点" onclick="setCenter();">
         <input type="button" value="关闭" onclick="closeMap();">
-            <!--<input type="button" value="pop" onclick="openPop();">-->
-        <p></p><br>
-
+        <p></p><br> 
+                
         </div>
       </div>
+        
+         
     </div>
     </div>
 </body>

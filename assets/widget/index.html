@@ -1,379 +1,53 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+    <head>
+        <title>
+        </title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="./css/index.css">
+        <script src="js/eruda.min.js"></script>
+        <script src="./js/index.js">
+        </script>
+    </head>
+
+    <body class="" ontouchstart>
+        <div class="bc-bg" tabindex="0" data-control="PAGE" id="Page_ylUCGd">
+            <div class="uh bc-head  ubb bc-border" data-control="HEADER" id="Header_bPMcMr">
+                <div class="ub">
+                    <div class="nav-btn" id="nav-left">
+                        <div class="fa fa-1g ub-img1">
+                        </div>
+                    </div>
+                    <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">测试系统</h1>
+                    <div class="nav-btn" id="nav-right">
+                        <div class="fa  fa-1g  ub-img1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="btncss" data-control="BOX">
+                <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexGaodeMap" onclick='openTestCase("uexGaodeMap")'>uexGaodeMap</div>
+            </div>
+        </div>
+        <script src="js/appcan.js">
+        </script>
+        <script src="js/appcan.control.js">
+        </script>
+        <script src="js/appcan.scrollbox.js">
+        </script>
+        <script src="js/template.import.js">
+        </script>
+        <script src="./assets/mvvm/index.js">
+        </script>
+
+    </body>
 
-    <script type="text/javascript">
-    function open(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.open(data);
-    }
-
-    function close(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.close(data);
-    }
-
-    function setMapType(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setMapType(data);
-    }
-
-    function setTrafficEnabled(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setTrafficEnabled(data);
-    }
-
-    function setCenter(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setCenter(data);
-    }
-
-    function setZoomLevel(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setZoomLevel(data);
-    }
-
-    function zoomIn(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.zoomIn(data);
-    }
-
-    function zoomOut(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.zoomOut(data);
-    }
-
-    function rotate(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.rotate(data);
-    }
-
-    function overlook(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.overlook(data);
-    }
-
-    function setZoomEnable(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setZoomEnable(data);
-    }
-
-    function setRotateEnable(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setRotateEnable(data);
-    }
-
-    function setCompassEnable(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setCompassEnable(data);
-    }
-
-    function setScrollEnable(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setScrollEnable(data);
-    }
-
-    function setOverlookEnable(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setOverlookEnable(data);
-    }
-
-    function addMarkersOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.addMarkersOverlay(data);
-    }
-
-    function setMarkerOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setMarkerOverlay(data);
-    }
-
-    function showBubble(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.showBubble(data);
-    }
-
-    function hideBubble(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.hideBubble(data);
-    }
-
-    function addPolylineOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.addPolylineOverlay(data);
-    }
-
-    function removeOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.removeOverlay(data);
-    }
-
-    function addArcOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.addArcOverlay(data);
-    }
-
-    function addCircleOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.addCircleOverlay(data);
-    }
-
-    function addPolygonOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.addPolygonOverlay(data);
-    }
-
-    function addGroundOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.addGroundOverlay(data);
-    }
-
-    function removeMarkersOverlay(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.removeMarkersOverlay(data);
-    }
-
-    function poiSearch(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.poiSearch(data);
-    }
-
-    function geocode(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.geocode(data);
-    }
-
-    function reverseGeocode(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.reverseGeocode(data);
-    }
-
-    function getCurrentLocation(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.getCurrentLocation(data);
-    }
-
-    function startLocation(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.startLocation(data);
-    }
-
-    function stopLocation(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.stopLocation(data);
-    }
-
-    function setMyLocationEnable(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setMyLocationEnable(data);
-    }
-
-    function setUserTrackingMode(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setUserTrackingMode(data);
-    }
-
-    function setScaleVisible(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setScaleVisible(data);
-    }
-
-    function setMyLocationButtonVisible(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setMyLocationButtonVisible(data);
-    }
-
-    function setZoomVisible(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.setZoomVisible(data);
-    }
-
-    function removeMarkersOverlays(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.removeMarkersOverlays(data);
-    }
-
-    function removeOverlays(){
-        var params = {
-        };
-        var data = JSON.stringify(params);
-        uexGaodeMap.removeOverlays(data);
-    }
-
-
-        window.uexOnload = function(type){
-            if(type == 0){
-
-            }
-        }
-
-    </script>
-</head>
-
-<body>
-<div class="tit">uexGaodeMap</div>
-<div class="conbor">
-    <div class="consj">
-            <input class='btn' type='button' value='open' onclick='open()'>
-
-            <input class='btn' type='button' value='close' onclick='close()'>
-
-            <input class='btn' type='button' value='setMapType' onclick='setMapType()'>
-
-            <input class='btn' type='button' value='setTrafficEnabled' onclick='setTrafficEnabled()'>
-
-            <input class='btn' type='button' value='setCenter' onclick='setCenter()'>
-
-            <input class='btn' type='button' value='setZoomLevel' onclick='setZoomLevel()'>
-
-            <input class='btn' type='button' value='zoomIn' onclick='zoomIn()'>
-
-            <input class='btn' type='button' value='zoomOut' onclick='zoomOut()'>
-
-            <input class='btn' type='button' value='rotate' onclick='rotate()'>
-
-            <input class='btn' type='button' value='overlook' onclick='overlook()'>
-
-            <input class='btn' type='button' value='setZoomEnable' onclick='setZoomEnable()'>
-
-            <input class='btn' type='button' value='setRotateEnable' onclick='setRotateEnable()'>
-
-            <input class='btn' type='button' value='setCompassEnable' onclick='setCompassEnable()'>
-
-            <input class='btn' type='button' value='setScrollEnable' onclick='setScrollEnable()'>
-
-            <input class='btn' type='button' value='setOverlookEnable' onclick='setOverlookEnable()'>
-
-            <input class='btn' type='button' value='addMarkersOverlay' onclick='addMarkersOverlay()'>
-
-            <input class='btn' type='button' value='setMarkerOverlay' onclick='setMarkerOverlay()'>
-
-            <input class='btn' type='button' value='showBubble' onclick='showBubble()'>
-
-            <input class='btn' type='button' value='hideBubble' onclick='hideBubble()'>
-
-            <input class='btn' type='button' value='addPolylineOverlay' onclick='addPolylineOverlay()'>
-
-            <input class='btn' type='button' value='removeOverlay' onclick='removeOverlay()'>
-
-            <input class='btn' type='button' value='addArcOverlay' onclick='addArcOverlay()'>
-
-            <input class='btn' type='button' value='addCircleOverlay' onclick='addCircleOverlay()'>
-
-            <input class='btn' type='button' value='addPolygonOverlay' onclick='addPolygonOverlay()'>
-
-            <input class='btn' type='button' value='addGroundOverlay' onclick='addGroundOverlay()'>
-
-            <input class='btn' type='button' value='removeMarkersOverlay' onclick='removeMarkersOverlay()'>
-
-            <input class='btn' type='button' value='poiSearch' onclick='poiSearch()'>
-
-            <input class='btn' type='button' value='geocode' onclick='geocode()'>
-
-            <input class='btn' type='button' value='reverseGeocode' onclick='reverseGeocode()'>
-
-            <input class='btn' type='button' value='getCurrentLocation' onclick='getCurrentLocation()'>
-
-            <input class='btn' type='button' value='startLocation' onclick='startLocation()'>
-
-            <input class='btn' type='button' value='stopLocation' onclick='stopLocation()'>
-
-            <input class='btn' type='button' value='setMyLocationEnable' onclick='setMyLocationEnable()'>
-
-            <input class='btn' type='button' value='setUserTrackingMode' onclick='setUserTrackingMode()'>
-
-            <input class='btn' type='button' value='setScaleVisible' onclick='setScaleVisible()'>
-
-            <input class='btn' type='button' value='setMyLocationButtonVisible' onclick='setMyLocationButtonVisible()'>
-
-            <input class='btn' type='button' value='setZoomVisible' onclick='setZoomVisible()'>
-
-            <input class='btn' type='button' value='removeMarkersOverlays' onclick='removeMarkersOverlays()'>
-
-            <input class='btn' type='button' value='removeOverlays' onclick='removeOverlays()'>
-
-
-    </div>
-</div>
-</body>
 </html>

@@ -1,5 +1,6 @@
 package org.zywx.wbpalmstar.plugin.uexgaodemap.result;
 
+
 import java.io.Serializable;
 
 public class ResultVO<T> implements Serializable {
