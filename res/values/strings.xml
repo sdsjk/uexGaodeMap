@@ -2,7 +2,7 @@
 <resources>
 
 <!-- common use通用字符串 -->
-    <string name="app_name">uexGaodeMap</string>
+    <string name="app_name">高德地图</string>
     <!-- plugin_uexGaodeMap -->
     <string name="plugin_uexgaodemap_wrong_city_name">城市或省名称错误！</string>
     <string name="plugin_uexgaodemap_unknown">下载失败，请检查网络设置，或稍后再试！</string>

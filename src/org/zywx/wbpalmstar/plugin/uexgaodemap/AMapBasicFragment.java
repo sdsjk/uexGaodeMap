@@ -26,7 +26,6 @@ import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
-import com.amap.api.maps.overlay.PoiOverlay;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.geocoder.GeocodeQuery;
 import com.amap.api.services.geocoder.GeocodeResult;
@@ -862,10 +861,6 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
                 // 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
                 if (poiItems != null && poiItems.size() > 0) {
                     aMap.clear();//清理之前的图标
-                    PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
-                    poiOverlay.removeFromMap();
-                    poiOverlay.addToMap();
-                    poiOverlay.zoomToSpan();
                     isShowOverlay = false;
                 }
             }

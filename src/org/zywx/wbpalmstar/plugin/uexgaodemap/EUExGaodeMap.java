@@ -8,6 +8,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -30,6 +31,11 @@ import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.poisearch.PoiResult;
+import com.amap.api.services.route.BusRouteResult;
+import com.amap.api.services.route.DriveRouteResult;
+import com.amap.api.services.route.RideRouteResult;
+import com.amap.api.services.route.RouteSearch;
+import com.amap.api.services.route.WalkRouteResult;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -49,6 +55,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadItemVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadStatusVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.RouteSearchVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.UpdateResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleBoundsVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleVO;
@@ -235,8 +242,8 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         basicFragment = new AMapBasicFragment(EUExGaodeMap.this,latlng);
 
         if (isScrollWithWeb){
-            android.widget.AbsoluteLayout.LayoutParams lp = new
-                    android.widget.AbsoluteLayout.LayoutParams(
+            AbsoluteLayout.LayoutParams lp = new
+                    AbsoluteLayout.LayoutParams(
                     width,
                     height,
                     left,
@@ -2275,6 +2282,191 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             default:
                 super.onHandleMessage(message);
         }
+    }
+
+    public void drivingRouteSearch(String[] params) {
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
+        RouteSearchVO searchVO=DataHelper.gson.fromJson(params[0],RouteSearchVO.class);
+
+        RouteSearch routeSearch=new RouteSearch(mContext);
+        final int finalCallbackId = callbackId;
+        routeSearch.setRouteSearchListener(new RouteSearch.OnRouteSearchListener() {
+            @Override
+            public void onBusRouteSearched(BusRouteResult busRouteResult, int i) {
+
+            }
+
+            @Override
+            public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int errorCode) {
+                if (finalCallbackId !=-1){
+                    callbackToJs(finalCallbackId,
+                            false,errorCode==1000?0:errorCode,
+                            driveRouteResult==null?null:
+                            DataHelper.gson.toJsonTree(GaodeUtils.getRouteSearchResultVO(driveRouteResult)));
+                }
+            }
+
+            @Override
+            public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int i) {
+
+            }
+            @Override
+            public void onRideRouteSearched(RideRouteResult rideRouteResult, int i) {
+
+            }
+        });
+
+        RouteSearch.DriveRouteQuery query=new RouteSearch.DriveRouteQuery(
+                new RouteSearch.FromAndTo(
+                        new LatLonPoint(searchVO.origin.latitude,searchVO.origin.longitude),
+                        new LatLonPoint(searchVO.destination.latitude,searchVO.destination.longitude)
+                ),
+                searchVO.strategy,
+                null,
+                null,
+                searchVO.avoidRoad
+        );
+        routeSearch.calculateDriveRouteAsyn(query);
+    }
+
+    public void walkingRouteSearch(String[] params) {
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
+        RouteSearchVO searchVO=DataHelper.gson.fromJson(params[0],RouteSearchVO.class);
+
+        RouteSearch routeSearch=new RouteSearch(mContext);
+        final int finalCallbackId = callbackId;
+        routeSearch.setRouteSearchListener(new RouteSearch.OnRouteSearchListener() {
+            @Override
+            public void onBusRouteSearched(BusRouteResult busRouteResult, int i) {
+
+            }
+
+            @Override
+            public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int errorCode) {
+            }
+
+            @Override
+            public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int errorCode) {
+                if (finalCallbackId !=-1){
+                    callbackToJs(finalCallbackId,
+                            false,errorCode==1000?0:errorCode,
+                            walkRouteResult==null?null:
+                            DataHelper.gson.toJsonTree(GaodeUtils.getRouteSearchResultVO(walkRouteResult)));
+                }
+            }
+
+            @Override
+            public void onRideRouteSearched(RideRouteResult rideRouteResult, int i) {
+
+            }
+
+        });
+
+        RouteSearch.WalkRouteQuery query=new RouteSearch.WalkRouteQuery(
+                new RouteSearch.FromAndTo(
+                        new LatLonPoint(searchVO.origin.latitude,searchVO.origin.longitude),
+                        new LatLonPoint(searchVO.destination.latitude,searchVO.destination.longitude)
+                ),
+                searchVO.strategy
+        );
+        routeSearch.calculateWalkRouteAsyn(query);
+    }
+
+    public void ridingRouteSearch(String[] params) {
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
+        RouteSearchVO searchVO=DataHelper.gson.fromJson(params[0],RouteSearchVO.class);
+
+        RouteSearch routeSearch=new RouteSearch(mContext);
+        final int finalCallbackId = callbackId;
+        routeSearch.setRouteSearchListener(new RouteSearch.OnRouteSearchListener() {
+            @Override
+            public void onBusRouteSearched(BusRouteResult busRouteResult, int i) {
+
+            }
+
+            @Override
+            public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int errorCode) {
+            }
+
+            @Override
+            public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int errorCode) {
+            }
+
+            @Override
+            public void onRideRouteSearched(RideRouteResult rideRouteResult, int errorCode) {
+                if (finalCallbackId !=-1){
+                    callbackToJs(finalCallbackId,
+                            false,errorCode==1000?0:errorCode,
+                            rideRouteResult==null?null:
+                            DataHelper.gson.toJsonTree(GaodeUtils.getRouteSearchResultVO(rideRouteResult)));
+                }
+            }
+
+        });
+
+        RouteSearch.RideRouteQuery query=new RouteSearch.RideRouteQuery(
+                new RouteSearch.FromAndTo(
+                        new LatLonPoint(searchVO.origin.latitude,searchVO.origin.longitude),
+                        new LatLonPoint(searchVO.destination.latitude,searchVO.destination.longitude)
+                ),
+                searchVO.strategy
+        );
+        routeSearch.calculateRideRouteAsyn(query);
+    }
+
+    public void transitRouteSearch(String[] params) {
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
+        RouteSearchVO searchVO=DataHelper.gson.fromJson(params[0],RouteSearchVO.class);
+
+        RouteSearch routeSearch=new RouteSearch(mContext);
+        final int finalCallbackId = callbackId;
+        routeSearch.setRouteSearchListener(new RouteSearch.OnRouteSearchListener() {
+            @Override
+            public void onBusRouteSearched(BusRouteResult busRouteResult, int errorCode) {
+                if (finalCallbackId !=-1){
+                    callbackToJs(finalCallbackId,
+                            false,
+                            errorCode==1000?0:errorCode,
+                            busRouteResult==null?null:
+                            DataHelper.gson.toJsonTree(GaodeUtils.getRouteSearchResultVO(busRouteResult)));
+                }
+            }
+
+            @Override
+            public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int errorCode) {
+            }
+
+            @Override
+            public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int errorCode) {
+
+            }
+            @Override
+            public void onRideRouteSearched(RideRouteResult rideRouteResult, int i) {
+
+            }
+
+
+        });
+        RouteSearch.BusRouteQuery query = new RouteSearch.BusRouteQuery(
+                new RouteSearch.FromAndTo(
+                        new LatLonPoint(searchVO.origin.latitude,searchVO.origin.longitude),
+                        new LatLonPoint(searchVO.destination.latitude,searchVO.destination.longitude)),
+                searchVO.strategy,
+                searchVO.city,
+                searchVO.nightFlag?1:0);
+        routeSearch.calculateBusRouteAsyn(query);
     }
 
     private void callBackPluginJs(String methodName, String jsonData){

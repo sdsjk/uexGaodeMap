@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
-	<plugin
-        className="org.zywx.wbpalmstar.plugin.uexgaodemap.EUExGaodeMap"
-        uexName="uexGaodeMap" >
-        <method name="open" />
-        <method name="close" />
-        <method name="setMapType" />
-        <method name="setTrafficEnabled" />
-        <method name="setCenter" />
-        <method name="setZoomLevel" />
-        <method name="zoomIn" />
-        <method name="zoomOut" />
-        <method name="rotate" />
-        <method name="overlook" />
-        <method name="setZoomEnable" />
-        <method name="setRotateEnable" />
-        <method name="setCompassEnable" />
-        <method name="setScrollEnable" />
-        <method name="setOverlookEnable" />
-        <method name="addMarkersOverlay" />
-        <method name="setMarkerOverlay" />
-        <method name="showBubble" />
-        <method name="hideBubble" />
-        <method name="addPolylineOverlay" />
+    <plugin
+            className="org.zywx.wbpalmstar.plugin.uexgaodemap.EUExGaodeMap"
+            uexName="uexGaodeMap">
+        <method name="open"/>
+        <method name="close"/>
+        <method name="setMapType"/>
+        <method name="setTrafficEnabled"/>
+        <method name="setCenter"/>
+        <method name="setZoomLevel"/>
+        <method name="zoomIn"/>
+        <method name="zoomOut"/>
+        <method name="rotate"/>
+        <method name="overlook"/>
+        <method name="setZoomEnable"/>
+        <method name="setRotateEnable"/>
+        <method name="setCompassEnable"/>
+        <method name="setScrollEnable"/>
+        <method name="setOverlookEnable"/>
+        <method name="addMarkersOverlay"/>
+        <method name="setMarkerOverlay"/>
+        <method name="showBubble"/>
+        <method name="hideBubble"/>
+        <method name="addPolylineOverlay"/>
         <method name="removeOverlay"/>
-        <method name="addArcOverlay" />
-        <method name="addCircleOverlay" />
-        <method name="addPolygonOverlay" />
-        <method name="addGroundOverlay" />
-        <method name="removeMarkersOverlay" />
+        <method name="addArcOverlay"/>
+        <method name="addCircleOverlay"/>
+        <method name="addPolygonOverlay"/>
+        <method name="addGroundOverlay"/>
+        <method name="removeMarkersOverlay"/>
         <method name="poiSearch"/>
-        <method name="geocode" />
-        <method name="reverseGeocode" />
-        <method name="getCurrentLocation" />
-        <method name="startLocation" />
-        <method name="stopLocation" />
-        <method name="setMyLocationEnable" />
-        <method name="setUserTrackingMode" />
-        <method name = "setScaleVisible"/>
-        <method name = "setMyLocationButtonVisible"/>
-        <method name = "setZoomVisible"/>
+        <method name="geocode"/>
+        <method name="reverseGeocode"/>
+        <method name="getCurrentLocation"/>
+        <method name="startLocation"/>
+        <method name="stopLocation"/>
+        <method name="setMyLocationEnable"/>
+        <method name="setUserTrackingMode"/>
+        <method name="setScaleVisible"/>
+        <method name="setMyLocationButtonVisible"/>
+        <method name="setZoomVisible"/>
 
-        <method name="removeMarkersOverlays" />
+        <method name="removeMarkersOverlays"/>
         <method name="removeOverlays"/>
 
         <method name="clear"/>
@@ -62,5 +62,9 @@
         <method name="hideCustomButtons"/>
         <method name="addMultiInfoWindow"/>
 
+        <method name="drivingRouteSearch"/>
+        <method name="walkingRouteSearch"/>
+        <method name="ridingRouteSearch"/>
+        <method name="transitRouteSearch"/>
     </plugin>
 </uexplugins>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexGaodeMap" version="4.0.1" build="1">
-        <info>1:支持多信息窗样式</info>
+        uexName="uexGaodeMap" version="4.0.2" build="2">
+        <info>2:支持路径规划</info>
+        <build>1:支持多信息窗样式</build>
         <bulid>0:高德地图插件</bulid>
     </plugin>
 </uexplugins>

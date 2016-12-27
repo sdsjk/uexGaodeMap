@@ -24,8 +24,6 @@ repositories {
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
     compile 'org.appcan:engine:+:systemRelease@aar'
-    compile files('libs/AMap_3DMap_V3.3.2_20160525.jar')
-    compile files('libs/AMap_Location_V2.4.1_20160414.jar')
 }
 
 android {

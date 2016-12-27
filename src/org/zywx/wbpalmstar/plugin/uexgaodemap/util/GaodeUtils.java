@@ -7,6 +7,23 @@ import android.text.TextUtils;
 
 import com.amap.api.maps.model.LatLng;
 
+import com.amap.api.services.busline.BusLineItem;
+import com.amap.api.services.busline.BusStationItem;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.route.BusPath;
+import com.amap.api.services.route.BusRouteResult;
+import com.amap.api.services.route.BusStep;
+import com.amap.api.services.route.DrivePath;
+import com.amap.api.services.route.DriveRouteResult;
+import com.amap.api.services.route.DriveStep;
+import com.amap.api.services.route.RidePath;
+import com.amap.api.services.route.RideRouteResult;
+import com.amap.api.services.route.RideStep;
+import com.amap.api.services.route.RouteBusLineItem;
+import com.amap.api.services.route.RouteBusWalkItem;
+import com.amap.api.services.route.WalkPath;
+import com.amap.api.services.route.WalkRouteResult;
+import com.amap.api.services.route.WalkStep;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,10 +32,21 @@ import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.JsConst;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomBubbleVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeBuslineVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeGeoPointVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodePathVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeSegmentVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeStepVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeTransitVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.RidingRouteSearchVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.RouteSearchResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.SegmentWalkingVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.WalkingRouteSearchVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.InfoWindowMarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -242,4 +270,286 @@ public class GaodeUtils {
     public static int getRandomId() {
         return (int)(Math.random() * 100000);
     }
+
+
+    /*
+    *
+    *
+    * 公交规划
+    *
+    * */
+
+    public static RouteSearchResultVO getRouteSearchResultVO(BusRouteResult busRouteResult){
+        RouteSearchResultVO resultVO=new RouteSearchResultVO();
+        if (busRouteResult.getPaths()!=null){
+            List<GaodeTransitVO> pathVOS=new ArrayList<GaodeTransitVO>();
+            for (BusPath busPath:busRouteResult.getPaths()){
+                pathVOS.add(getGaodePathVO(busPath));
+            }
+            resultVO.paths=pathVOS;
+        }
+        resultVO.describeContents=busRouteResult.describeContents();
+        return resultVO;
+    }
+
+    private static GaodeTransitVO getGaodePathVO(BusPath busPath){
+        GaodeTransitVO transitVO=new GaodeTransitVO();
+        transitVO.cost=busPath.getCost();
+        transitVO.distance=busPath.getDistance();
+        transitVO.duration=busPath.getDuration();
+        transitVO.nightFlag=busPath.isNightBus();
+        transitVO.walkingDistance=busPath.getWalkDistance();
+        if (busPath.getSteps()!=null){
+            List<GaodeSegmentVO> stepVOS=new ArrayList<GaodeSegmentVO>();
+            for (BusStep busStep:busPath.getSteps()){
+                stepVOS.add(getGaodeSegmentVO(busStep));
+            }
+            transitVO.segments=stepVOS;
+        }
+        return transitVO;
+    }
+
+    private static GaodeSegmentVO getGaodeSegmentVO(BusStep busStep){
+        GaodeSegmentVO segmentVO=new GaodeSegmentVO();
+        if (busStep.getBusLines()!=null){
+            List<GaodeBuslineVO> buslineVOS=new ArrayList<GaodeBuslineVO>();
+            for (BusLineItem busLineItem:busStep.getBusLines()){
+                buslineVOS.add(getGaodeBuslineVO(busLineItem));
+            }
+            segmentVO.buslines=buslineVOS;
+        }
+        if (busStep.getEntrance()!=null) {
+            segmentVO.enterName = busStep.getEntrance().getName();
+            segmentVO.enterPoint = getGaodeGeoPointVO(busStep.getEntrance().getLatLonPoint());
+        }
+        if (busStep.getExit()!=null) {
+            segmentVO.exitName = busStep.getExit().getName();
+            segmentVO.exitPoint=getGaodeGeoPointVO(busStep.getExit().getLatLonPoint());
+        }
+        if (busStep.getWalk()!=null) {
+            segmentVO.walking = getSegmentWalkingVO(busStep.getWalk());
+        }
+        return segmentVO;
+    }
+
+    private static SegmentWalkingVO getSegmentWalkingVO(RouteBusWalkItem walkItem){
+        SegmentWalkingVO walkingVO=new SegmentWalkingVO();
+        if (walkItem.getOrigin()!=null) {
+            walkingVO.origin = getGaodeGeoPointVO(walkItem.getOrigin());
+        }
+        if (walkItem.getDestination()!=null) {
+            walkingVO.destination = getGaodeGeoPointVO(walkItem.getDestination());
+        }
+        walkingVO.distance=walkItem.getDistance();
+        walkingVO.duration=walkItem.getDuration();
+        if (walkItem.getSteps()!=null){
+            List<GaodeStepVO> gaodeStepVOS=new ArrayList<GaodeStepVO>();
+            for (WalkStep walkStep:walkItem.getSteps()){
+                gaodeStepVOS.add(getGaodeStepVO(walkStep));
+            }
+            walkingVO.steps=gaodeStepVOS;
+        }
+        return walkingVO;
+    }
+
+    private static GaodeBuslineVO getGaodeBuslineVO(BusLineItem busLineItem){
+        GaodeBuslineVO buslineVO=new GaodeBuslineVO();
+        buslineVO.arrivalStop=busLineItem.getTerminalStation();
+        buslineVO.departureStop=busLineItem.getOriginatingStation();
+        buslineVO.distance=busLineItem.getDistance();
+        buslineVO.duration=((RouteBusLineItem)busLineItem).getDuration();
+        if (busLineItem.getFirstBusTime()!=null) {
+            buslineVO.startTime =new SimpleDateFormat("HHmm").format(busLineItem.getFirstBusTime());//跟iOS 格式保持一致
+        }
+        if (busLineItem.getLastBusTime()!=null) {
+            buslineVO.endTime = new SimpleDateFormat("HHmm").format(busLineItem.getLastBusTime());
+        }
+        buslineVO.name=busLineItem.getBusLineName();
+        buslineVO.price=busLineItem.getTotalPrice();
+        buslineVO.type=busLineItem.getBusLineType();
+        buslineVO.uid=busLineItem.getBusLineId();
+        buslineVO.viaStops=getViaStops(busLineItem.getBusStations());
+        return buslineVO;
+    }
+
+    private static List<String> getViaStops(List<BusStationItem> busStationItems){
+        if (busStationItems==null){
+            return null;
+        }
+        List<String> viaStops=new ArrayList<String>();
+        for (BusStationItem busStationItem:busStationItems){
+            viaStops.add(busStationItem.getBusStationName());
+        }
+        return viaStops;
+    }
+
+    /*
+    *
+    * 步行规划
+    *
+    * */
+
+    public static RouteSearchResultVO getRouteSearchResultVO(WalkRouteResult walkRouteResult){
+        RouteSearchResultVO resultVO=new RouteSearchResultVO();
+        if (walkRouteResult.getPaths()!=null){
+            List<GaodePathVO> pathVOS=new ArrayList<GaodePathVO>();
+            for (WalkPath walkPath:walkRouteResult.getPaths()){
+                pathVOS.add(getGaodePathVO(walkPath));
+            }
+            resultVO.paths=pathVOS;
+        }
+        resultVO.describeContents=walkRouteResult.describeContents();
+        return resultVO;
+    }
+
+    private static GaodePathVO getGaodePathVO(WalkPath drivePath){
+        GaodePathVO pathVO=new GaodePathVO();
+        pathVO.distance=drivePath.getDistance();
+        pathVO.duration=drivePath.getDuration();
+        if (drivePath.getSteps()!=null){
+            List<GaodeStepVO> stepVOS=new ArrayList<GaodeStepVO>();
+            for (WalkStep driveStep:drivePath.getSteps()){
+                stepVOS.add(getGaodeStepVO(driveStep));
+            }
+            pathVO.steps=stepVOS;
+        }
+        return pathVO;
+    }
+
+    private static GaodeStepVO getGaodeStepVO(WalkStep walkStep){
+        GaodeStepVO stepVO=new GaodeStepVO();
+        stepVO.action=walkStep.getAction();
+        stepVO.distance=walkStep.getDistance();
+        stepVO.duration=walkStep.getDuration();
+        stepVO.instruction=walkStep.getInstruction();
+        stepVO.orientation=walkStep.getOrientation();
+        stepVO.road=walkStep.getRoad();
+        if (walkStep.getPolyline()!=null){
+            List<GaodeGeoPointVO> pointVOS=new ArrayList<GaodeGeoPointVO>();
+            for (LatLonPoint point:walkStep.getPolyline()){
+                pointVOS.add(getGaodeGeoPointVO(point));
+            }
+            stepVO.points=pointVOS;
+        }
+        return stepVO;
+    }
+
+
+    /*
+    *
+    * 开车规划
+    * */
+
+    public static RouteSearchResultVO getRouteSearchResultVO(DriveRouteResult driveRouteResult){
+        RouteSearchResultVO resultVO=new RouteSearchResultVO();
+        if (driveRouteResult.getPaths()!=null){
+            List<GaodePathVO> pathVOS=new ArrayList<GaodePathVO>();
+            for (DrivePath drivePath:driveRouteResult.getPaths()){
+                pathVOS.add(getGaodePathVO(drivePath));
+            }
+            resultVO.paths=pathVOS;
+        }
+        resultVO.taxiCost=driveRouteResult.getTaxiCost();
+        resultVO.describeContents=driveRouteResult.describeContents();
+        return resultVO;
+    }
+
+    private static GaodePathVO getGaodePathVO(DrivePath drivePath){
+        GaodePathVO pathVO=new GaodePathVO();
+        pathVO.distance=drivePath.getDistance();
+        pathVO.duration=drivePath.getDuration();
+        pathVO.strategy=drivePath.getStrategy();
+        pathVO.tolls=drivePath.getTolls();
+        if (drivePath.getSteps()!=null){
+            List<GaodeStepVO> stepVOS=new ArrayList<GaodeStepVO>();
+            for (DriveStep driveStep:drivePath.getSteps()){
+                stepVOS.add(getGaodeStepVO(driveStep));
+            }
+            pathVO.steps=stepVOS;
+        }
+        return pathVO;
+    }
+
+    private static GaodeStepVO getGaodeStepVO(DriveStep driveStep){
+        GaodeStepVO stepVO=new GaodeStepVO();
+        stepVO.action=driveStep.getAction();
+        stepVO.distance=driveStep.getDistance();
+        stepVO.duration=driveStep.getDuration();
+        stepVO.instruction=driveStep.getInstruction();
+        stepVO.orientation=driveStep.getOrientation();
+        stepVO.road=driveStep.getRoad();
+        if (driveStep.getPolyline()!=null){
+            List<GaodeGeoPointVO> pointVOS=new ArrayList<GaodeGeoPointVO>();
+            for (LatLonPoint point:driveStep.getPolyline()){
+                pointVOS.add(getGaodeGeoPointVO(point));
+            }
+            stepVO.points=pointVOS;
+        }
+        stepVO.tolls=driveStep.getTolls();
+        return stepVO;
+    }
+
+    /*
+     *
+     * 骑车规划
+     *
+     */
+
+    public static RouteSearchResultVO getRouteSearchResultVO(RideRouteResult walkRouteResult){
+        RouteSearchResultVO resultVO=new RouteSearchResultVO();
+        if (walkRouteResult.getPaths()!=null){
+            List<GaodePathVO> pathVOS=new ArrayList<GaodePathVO>();
+            for (RidePath ridePath:walkRouteResult.getPaths()){
+                pathVOS.add(getGaodePathVO(ridePath));
+            }
+            resultVO.paths=pathVOS;
+        }
+        resultVO.describeContents=walkRouteResult.describeContents();
+        return resultVO;
+    }
+
+    private static GaodePathVO getGaodePathVO(RidePath ridePath){
+        GaodePathVO pathVO=new GaodePathVO();
+        pathVO.distance=ridePath.getDistance();
+        pathVO.duration=ridePath.getDuration();
+        if (ridePath.getSteps()!=null){
+            List<GaodeStepVO> stepVOS=new ArrayList<GaodeStepVO>();
+            for (RideStep driveStep:ridePath.getSteps()){
+                stepVOS.add(getGaodeStepVO(driveStep));
+            }
+            pathVO.steps=stepVOS;
+        }
+        return pathVO;
+    }
+
+    private static GaodeStepVO getGaodeStepVO(RideStep walkStep){
+        GaodeStepVO stepVO=new GaodeStepVO();
+        stepVO.action=walkStep.getAction();
+        stepVO.distance=walkStep.getDistance();
+        stepVO.duration=walkStep.getDuration();
+        stepVO.instruction=walkStep.getInstruction();
+        stepVO.orientation=walkStep.getOrientation();
+        stepVO.road=walkStep.getRoad();
+        if (walkStep.getPolyline()!=null){
+            List<GaodeGeoPointVO> pointVOS=new ArrayList<GaodeGeoPointVO>();
+            for (LatLonPoint point:walkStep.getPolyline()){
+                pointVOS.add(getGaodeGeoPointVO(point));
+            }
+            stepVO.points=pointVOS;
+        }
+        return stepVO;
+    }
+
+
+    private static GaodeGeoPointVO getGaodeGeoPointVO(LatLonPoint latLonPoint){
+        if (latLonPoint==null){
+            return null;
+        }
+        GaodeGeoPointVO pointVO=new GaodeGeoPointVO();
+        pointVO.latitude=latLonPoint.getLatitude();
+        pointVO.longitude=latLonPoint.getLongitude();
+        return pointVO;
+    }
+
+
 }
