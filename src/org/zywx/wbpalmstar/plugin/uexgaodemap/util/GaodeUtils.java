@@ -288,7 +288,6 @@ public class GaodeUtils {
             }
             resultVO.paths=pathVOS;
         }
-        resultVO.describeContents=busRouteResult.describeContents();
         return resultVO;
     }
 
@@ -398,7 +397,6 @@ public class GaodeUtils {
             }
             resultVO.paths=pathVOS;
         }
-        resultVO.describeContents=walkRouteResult.describeContents();
         return resultVO;
     }
 
@@ -450,7 +448,6 @@ public class GaodeUtils {
             resultVO.paths=pathVOS;
         }
         resultVO.taxiCost=driveRouteResult.getTaxiCost();
-        resultVO.describeContents=driveRouteResult.describeContents();
         return resultVO;
     }
 
@@ -504,7 +501,6 @@ public class GaodeUtils {
             }
             resultVO.paths=pathVOS;
         }
-        resultVO.describeContents=walkRouteResult.describeContents();
         return resultVO;
     }
 

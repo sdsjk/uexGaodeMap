@@ -12,6 +12,4 @@ public class RouteSearchResultVO<T> implements Serializable {
 
     public float taxiCost;
 
-    public int describeContents;
-
 }
