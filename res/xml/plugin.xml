@@ -69,5 +69,6 @@
         <method name="ridingRouteSearch"/>
         <method name="transitRouteSearch"/>
 
+        <method name="resize"/>
     </plugin>
 </uexplugins>

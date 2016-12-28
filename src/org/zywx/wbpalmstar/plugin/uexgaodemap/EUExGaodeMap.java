@@ -8,8 +8,10 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.amap.api.location.AMapLocation;
@@ -55,6 +57,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadItemVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadStatusVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.ResizeVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.RouteSearchVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.UpdateResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.VisibleBoundsVO;
@@ -2467,6 +2470,17 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
                 searchVO.city,
                 searchVO.nightFlag?1:0);
         routeSearch.calculateBusRouteAsyn(query);
+    }
+
+    public void resize(String[] params) {
+        ResizeVO resizeVO=DataHelper.gson.fromJson(params[0],ResizeVO.class);
+        if (basicFragment!=null){
+            FrameLayout.LayoutParams layoutParams= (FrameLayout.LayoutParams) basicFragment.getView().getLayoutParams();
+            layoutParams.height=resizeVO.height;
+            layoutParams.width=resizeVO.width;
+            layoutParams.setMargins(resizeVO.left,resizeVO.top,0,0);
+            basicFragment.getView().setLayoutParams(layoutParams);
+        }
     }
 
     private void callBackPluginJs(String methodName, String jsonData){
