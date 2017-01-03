@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -116,13 +117,16 @@ public class GaodeMapMarkerMgr extends GaodeMapBaseMgr implements OnMarkerClickL
             View view = ((EBrowserActivity)mContext).getLayoutInflater().inflate(EUExUtil.getResLayoutID("plugin_uexgaodemap_info_window"), null);
             TextView tvTitle = (TextView) view.findViewById(EUExUtil.getResIdID("plugin_uexgaodemap_info_window_title"));
             TextView tvSubTitle= (TextView) view.findViewById(EUExUtil.getResIdID("plugin_uexgaodemap_info_window_subTitle"));
-            tvTitle.setText(bean.getTitle());
+            tvTitle.setText(Html.fromHtml(bean.getTitle()));
             tvTitle.setTextColor(bean.getTitleColor());
             tvTitle.setTextSize(bean.getTitleSize());
+            int padding=EUExUtil.dipToPixels(4);
+            tvTitle.setPadding(padding,padding,padding,padding);
             if (!TextUtils.isEmpty(bean.getSubTitle())) {
                 tvSubTitle.setText(bean.getSubTitle());
                 tvSubTitle.setTextColor(bean.getSubTitleColor());
                 tvSubTitle.setTextSize(bean.getSubTitleSize());
+                tvSubTitle.setPadding(padding,padding,padding,padding);
                 tvSubTitle.setVisibility(View.VISIBLE);
             }
 
