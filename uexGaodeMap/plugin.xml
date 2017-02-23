@@ -68,6 +68,6 @@
         <method name="transitRouteSearch"/>
 
         <method name="resize"/>
-
+        <method name="queryProcessedTrace"/>
     </plugin>
 </uexplugins>

@@ -8,10 +8,8 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.amap.api.location.AMapLocation;
@@ -38,6 +36,9 @@ import com.amap.api.services.route.DriveRouteResult;
 import com.amap.api.services.route.RideRouteResult;
 import com.amap.api.services.route.RouteSearch;
 import com.amap.api.services.route.WalkRouteResult;
+import com.amap.api.trace.LBSTraceClient;
+import com.amap.api.trace.TraceListener;
+import com.amap.api.trace.TraceLocation;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -49,19 +50,6 @@ import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.AvailableCityVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.AvailableProvinceVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomButtonDisplayResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomButtonResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomButtonVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadItemVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadStatusVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.ResizeVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.RouteSearchVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.UpdateResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.VisibleBoundsVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.VisibleVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.ArcBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.BoundBaseBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.CircleBean;
@@ -78,6 +66,23 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.result.PoiItemVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.result.ResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.AvailableCityVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.AvailableProvinceVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomButtonDisplayResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomButtonResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomButtonVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadItemVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadStatusVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.GaodeGeoPointVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.QueryProcessedTraceVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.ResizeVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.RouteSearchVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.TraceLocationVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.TraceResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.UpdateResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.VisibleBoundsVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.VisibleVO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -2780,4 +2785,94 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     private String getActivityTag(){
         return AMapBasicFragment.TAG;
     }
+
+    public void queryProcessedTrace(String[] params){
+        QueryProcessedTraceVO queryProcessedTraceVO=DataHelper.gson.fromJson(params[0],QueryProcessedTraceVO.class);
+
+        int callbackId=-1;
+        if (params.length>1){
+            callbackId= Integer.parseInt(params[1]);
+        }
+
+        int progressCallbackId=-1;
+        if (params.length>2){
+            progressCallbackId= Integer.parseInt(params[2]);
+        }
+        LBSTraceClient lbsTraceClient=LBSTraceClient.getInstance(mContext);
+        final int finalCallbackId = callbackId;
+        final TraceResultVO traceResultVO=new TraceResultVO();
+        final int finalProgressCallbackId = progressCallbackId;
+        lbsTraceClient.queryProcessedTrace(queryProcessedTraceVO.sequenceLineId,
+                parseTraceLocationList(queryProcessedTraceVO.traceList),
+                queryProcessedTraceVO.coordinateType, new TraceListener() {
+                    @Override
+                    public void onRequestFailed(int lineID, String errorInfo) {
+                        if (finalCallbackId!=-1) {
+                            traceResultVO.lineID=lineID;
+                            traceResultVO.errorInfo=errorInfo;
+                            callbackToJs(finalCallbackId, false, 1,DataHelper.gson.toJsonTree(traceResultVO) );
+                        }
+                    }
+
+                    @Override
+                    public void onTraceProcessing(int lineID, int index, List<LatLng> linePoints) {
+                        if (finalProgressCallbackId!=-1){
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFinished(int lineID,List<LatLng> linePoints,int distance,int waitingTime) {
+
+                        if (finalCallbackId!=-1) {
+                            traceResultVO.lineID=lineID;
+                            traceResultVO.distance=distance;
+                            traceResultVO.waitingTime=waitingTime;
+                            traceResultVO.linePoints=parseGeoPoints(linePoints);
+                            callbackToJs(finalCallbackId, false, 0, DataHelper.gson.toJsonTree(traceResultVO));
+                        }
+                    }
+                });
+    }
+
+    private List<TraceLocation> parseTraceLocationList(List<TraceLocationVO> traceLocationVOs){
+        if (traceLocationVOs==null){
+            return null;
+        }
+        List<TraceLocation> traceLocations=new ArrayList<TraceLocation>();
+        for (int i=0;i<traceLocationVOs.size();i++ ){
+            TraceLocationVO traceLocationVO=traceLocationVOs.get(i);
+            TraceLocation traceLocation=new TraceLocation();
+            traceLocation.setBearing(traceLocationVO.bearing);
+            traceLocation.setLatitude(traceLocationVO.latitude);
+            traceLocation.setLongitude(traceLocationVO.longitude);
+            traceLocation.setSpeed(traceLocationVO.speed);
+            traceLocation.setTime(traceLocationVO.time);
+            traceLocations.add(traceLocation);
+        }
+        return traceLocations;
+    }
+
+
+
+    private List<GaodeGeoPointVO> parseGeoPoints(List<LatLng> points){
+        if (points==null){
+            return null;
+        }
+        List<GaodeGeoPointVO> gaodeGeoPointVOs=new ArrayList<GaodeGeoPointVO>();
+        for (int i = 0; i < points.size(); i++) {
+            GaodeGeoPointVO pointVO=new GaodeGeoPointVO();
+            pointVO.latitude=points.get(i).latitude;
+            pointVO.longitude=points.get(i).longitude;
+            gaodeGeoPointVOs.add(pointVO);
+        }
+        return gaodeGeoPointVOs;
+    }
+
+
+
+
+
+
 }
