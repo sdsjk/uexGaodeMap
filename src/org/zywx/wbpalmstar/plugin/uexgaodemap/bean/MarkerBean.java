@@ -2,7 +2,7 @@ package org.zywx.wbpalmstar.plugin.uexgaodemap.bean;
 
 import com.amap.api.maps.model.LatLng;
 
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomBubbleVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomBubbleVO;
 
 public class MarkerBean extends BaseBean{
     private String subTitle = null;

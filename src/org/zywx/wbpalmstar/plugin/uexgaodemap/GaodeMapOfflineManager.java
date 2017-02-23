@@ -15,12 +15,12 @@ import com.amap.api.maps.offlinemap.OfflineMapStatus;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableCityVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableProvinceVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadItemVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadStatusVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.UpdateResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.AvailableCityVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.AvailableProvinceVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadItemVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadStatusVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.UpdateResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.SharedPreferencesUtils;
 

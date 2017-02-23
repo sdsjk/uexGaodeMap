@@ -6,7 +6,6 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.amap.api.maps.model.LatLng;
-
 import com.amap.api.services.busline.BusLineItem;
 import com.amap.api.services.busline.BusStationItem;
 import com.amap.api.services.core.LatLonPoint;
@@ -24,6 +23,7 @@ import com.amap.api.services.route.RouteBusWalkItem;
 import com.amap.api.services.route.WalkPath;
 import com.amap.api.services.route.WalkRouteResult;
 import com.amap.api.services.route.WalkStep;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,19 +31,17 @@ import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.JsConst;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomBubbleVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeBuslineVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeGeoPointVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodePathVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeSegmentVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeStepVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.GaodeTransitVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.RidingRouteSearchVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.RouteSearchResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.SegmentWalkingVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.WalkingRouteSearchVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.InfoWindowMarkerBean;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.bean.MarkerBean;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomBubbleVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.GaodeBuslineVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.GaodeGeoPointVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.GaodePathVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.GaodeSegmentVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.GaodeStepVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.GaodeTransitVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.RouteSearchResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.SegmentWalkingVO;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

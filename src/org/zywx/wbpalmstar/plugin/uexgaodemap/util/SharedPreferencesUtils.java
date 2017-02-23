@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.google.gson.reflect.TypeToken;
 
 import org.zywx.wbpalmstar.engine.DataHelper;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadItemVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadItemVO;
 
 import java.util.ArrayList;
 import java.util.List;

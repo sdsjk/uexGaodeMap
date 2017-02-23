@@ -11,7 +11,7 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.Marker;
 
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.BubbleLayoutBaseVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.BubbleLayoutBaseVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.NinePatchUtils;
 
 public class CustomBubbleMarkerLayout implements AMap.InfoWindowAdapter{

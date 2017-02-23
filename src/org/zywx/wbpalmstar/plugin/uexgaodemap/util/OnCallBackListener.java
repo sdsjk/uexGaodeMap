@@ -7,14 +7,14 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.poisearch.PoiResult;
 
 import org.zywx.wbpalmstar.plugin.uexgaodemap.EUExGaodeMap;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableCityVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.AvailableProvinceVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonDisplayResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.CustomButtonResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadItemVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadResultVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.DownloadStatusVO;
-import org.zywx.wbpalmstar.plugin.uexgaodemap.VO.UpdateResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.AvailableCityVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.AvailableProvinceVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomButtonDisplayResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.CustomButtonResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadItemVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadResultVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.DownloadStatusVO;
+import org.zywx.wbpalmstar.plugin.uexgaodemap.vo.UpdateResultVO;
 
 import java.io.Serializable;
 import java.util.List;
