@@ -183,21 +183,7 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     }
 
 
-    public void open(String[] params) {
-        if (params == null || params.length < 1) {
-            errorCallback(0, 0, "error params!");
-            return;
-        }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_OPEN;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void openMsg(final String[] params) {
+    public void open(final String[] params) {
         if (getAMapActivity() != null){
             close(null);
             mHandler.postDelayed(new Runnable() {
@@ -209,7 +195,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         }else{
             openAMap(params);
         }
-
     }
 
     private void openAMap(final String[] params){
@@ -2140,9 +2125,6 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
         Bundle bundle=message.getData();
         switch (message.what) {
 
-            case MSG_OPEN:
-                openMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
             case MSG_CLOSE:
                 closeMsg();
                 break;

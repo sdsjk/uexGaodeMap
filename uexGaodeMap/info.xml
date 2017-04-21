@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexGaodeMap" version="4.0.3" build="3">
-        <info>3:支持轨迹纠偏</info>
+        uexName="uexGaodeMap" version="4.0.4" build="4">
+        <info>4:第一次open改为同步</info>
+        <build>3:支持轨迹纠偏</build>
         <build>2:支持路径规划</build>
         <build>1:支持多信息窗样式</build>
         <bulid>0:高德地图插件</bulid>
