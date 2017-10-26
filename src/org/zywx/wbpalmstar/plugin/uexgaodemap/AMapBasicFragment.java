@@ -23,10 +23,11 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
+import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
-import com.amap.api.maps.overlay.PoiOverlay;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.geocoder.GeocodeQuery;
 import com.amap.api.services.geocoder.GeocodeResult;
@@ -37,6 +38,8 @@ import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.amap.api.services.poisearch.PoiSearch.Query;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.view.BaseFragment;
@@ -68,7 +71,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListener,
-        LocationSource, AMap.OnMapClickListener, AMap.OnMapLongClickListener{
+        LocationSource, AMap.OnMapClickListener, AMap.OnMapLongClickListener,
+        AMap.OnCameraChangeListener {
     public static final String TAG = "AMapBasicFragment";
     private MapView mapView;
     private AMap aMap;
@@ -126,7 +130,31 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
         overlayMgr = new GaodeMapOverlayMgr(this.getActivity(), aMap, mListener, mOverlays);
         aMap.setOnMarkerClickListener(markerMgr);
         aMap.setOnInfoWindowClickListener(markerMgr);
+        aMap.setOnCameraChangeListener(this);
         return view;
+    }
+
+    @Override
+    public void onCameraChange(CameraPosition cameraPosition) {
+    }
+
+    @Override
+    public void onCameraChangeFinish(CameraPosition cameraPosition) {
+        JSONObject json = new JSONObject();
+        try {
+            // 可视区域的缩放级别
+            json.put(JsConst.ZOOM, cameraPosition.zoom);
+            // 屏幕中心点经度坐标
+            json.put(JsConst.LONGITUDE, cameraPosition.target.longitude);
+            // 屏幕中心点纬度坐标
+            json.put(JsConst.LATITUDE, cameraPosition.target.latitude);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(mListener != null){
+            mListener.onCameraChangeFinish(json.toString());
+        }
     }
 
     public void setOverlayVisibleBounds(VisibleBoundsVO data){
@@ -742,7 +770,9 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
 
     public void setMyLocationType(int type){
         if (aMap != null){
-            aMap.setMyLocationType(type);
+            MyLocationStyle myLocationStyle = new MyLocationStyle();
+            myLocationStyle.myLocationType(type);
+            aMap.setMyLocationStyle(myLocationStyle);
         }
     }
 
@@ -841,10 +871,6 @@ public class AMapBasicFragment extends BaseFragment implements OnMapLoadedListen
                 // 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
                 if (poiItems != null && poiItems.size() > 0) {
                     aMap.clear();//清理之前的图标
-                    PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
-                    poiOverlay.removeFromMap();
-                    poiOverlay.addToMap();
-                    poiOverlay.zoomToSpan();
                     isShowOverlay = false;
                 }
             }
