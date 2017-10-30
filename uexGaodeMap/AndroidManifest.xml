@@ -7,5 +7,6 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="$uexGaodeMap_APIKey$"/>
+        <service android:name="com.amap.api.location.APSService" />
 	</application>
 </manifest>

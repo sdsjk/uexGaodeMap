@@ -58,7 +58,8 @@
         </receiver>
          <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="6d67ed96c0691f1c238ab3fee5ef2d9a"/>
+            android:value="bc31e04d2366b6a605b4f57ae5728cc4"/>
+        <service android:name="com.amap.api.location.APSService" />
     </application>
 
     <uses-sdk android:minSdkVersion="4"/>

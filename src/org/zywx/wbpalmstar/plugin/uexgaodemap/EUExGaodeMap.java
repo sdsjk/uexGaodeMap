@@ -2,6 +2,8 @@ package org.zywx.wbpalmstar.plugin.uexgaodemap;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
@@ -15,6 +17,8 @@ import android.widget.RelativeLayout;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.MapsInitializer;
 import com.amap.api.maps.model.ArcOptions;
+import com.amap.api.maps.model.BitmapDescriptor;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.GroundOverlayOptions;
 import com.amap.api.maps.model.LatLng;
@@ -37,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
@@ -68,6 +73,7 @@ import org.zywx.wbpalmstar.plugin.uexgaodemap.result.ResultVO;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.GaodeUtils;
 import org.zywx.wbpalmstar.plugin.uexgaodemap.util.OnCallBackListener;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -843,6 +849,36 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
             if (jsonObject.has(JsConst.LINEWIDTH)){
                 float lineWidth = Float.valueOf(jsonObject.getString(JsConst.LINEWIDTH));
                 option.width(lineWidth);
+            }
+            if (jsonObject.has(JsConst.ISSHOWLINEIMAGE)){
+                boolean useTexture = Boolean.valueOf(jsonObject.getString(JsConst.ISSHOWLINEIMAGE));
+                if (useTexture) {
+                    String customTexture = "";
+                    BitmapDescriptor descriptor = null;
+                    if (jsonObject.has(JsConst.LINEIMAGEPATH)){
+                        customTexture = jsonObject.getString(JsConst.LINEIMAGEPATH);
+                    }
+                    if (TextUtils.isEmpty(customTexture)) {
+                        int drawableId = ResoureFinder.getInstance().getDrawableId("plugin_gaodemap_polyline_texture");
+                        descriptor = BitmapDescriptorFactory.fromResource(drawableId);
+                    } else {
+                        String path = BUtility.makeRealPath(customTexture, mBrwView);
+                        if (path.startsWith("widget/")) {
+                            try {
+                                InputStream in = mContext.getAssets().open(path);
+                                Bitmap temp = BitmapFactory.decodeStream(in, null, null);
+                                descriptor = BitmapDescriptorFactory.fromBitmap(temp);
+                                in.close();
+                                temp.recycle();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            descriptor = BitmapDescriptorFactory.fromPath(path);
+                        }
+                    }
+                    option.setCustomTexture(descriptor);
+                }
             }
             String jsonProperty = jsonObject.getString(JsConst.PROPERTY);
             JSONArray property = new JSONArray(jsonProperty);
@@ -2552,6 +2588,11 @@ public class EUExGaodeMap extends EUExBase implements OnCallBackListener {
     @Override
     public void onMapLongClick(LatLng point) {
         callBackPluginJs(JsConst.ON_MAP_LONG_CLICK_LISTENER, DataHelper.gson.toJson(point));
+    }
+
+    @Override
+    public void onCameraChangeFinish(String data) {
+        callBackPluginJs(JsConst.ON_CAMERA_CHANGE_FINISH, data);
     }
 
     @Override
