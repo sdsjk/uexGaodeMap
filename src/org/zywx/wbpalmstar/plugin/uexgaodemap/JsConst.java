@@ -14,6 +14,7 @@ public class JsConst {
     public static final String ON_S_D_K_RECEIVER_ERROR = "uexGaodeMap.onSDKReceiverError";
     public static final String ON_RECEIVE_LOCATION = "uexGaodeMap.onReceiveLocation";
     public static final String ON_MAP_LOADED_LISTENER = "uexGaodeMap.onMapLoadedListener";
+    public static final String ON_CAMERA_CHANGE_FINISH = "uexGaodeMap.onCameraChangeFinish";
     public static final String CALLBACK_OPEN = "uexGaodeMap.cbOpen";
 
     public static final String LEFT = "left";
@@ -40,12 +41,15 @@ public class JsConst {
     public static final String SUBTITLE_SIZE = "subTitleSize";
     public static final String TITLE_COLOR = "titleColor";
     public static final String SUBTITLE_COLOR = "subTitleColor";
+    public static final String ZOOM = "zoom";
 
     public static final String IS_SCROLL_WITH_WEB = "isScrollWithWeb";
 
     public static final String FILLCOLOR = "fillColor";
     public static final String LINEWIDTH = "lineWidth";
     public static final String PROPERTY = "property";
+    public static final String ISSHOWLINEIMAGE = "isShowLineImage";
+    public static final String LINEIMAGEPATH = "lineImagePath";
 
     public static final String STROKECOLOR = "strokeColor";
     public static final String START = "start";
