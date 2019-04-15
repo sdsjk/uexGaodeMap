@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexGaodeMap" version="3.0.17" build="2017092701">
-        <info>17:修复新SDK与高德导航冲突问题</info>
+        uexName="uexGaodeMap" version="3.0.18" build="2017092701">
+        <info>18:修复多窗口打开地图出现重叠问题</info>
+        <build>17:修复新SDK与高德导航冲突问题</build>
         <build>16:更新SDK,增加地图缩放级别的监听,支持定位点依照设备方向旋转,折线覆盖物支持设置纹理</build>
         <build>15:支持多信息窗样式</build>
         <build>14:解决与高德导航冲突的问题</build>
